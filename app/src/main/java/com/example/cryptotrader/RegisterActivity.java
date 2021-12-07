@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
@@ -86,8 +87,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()){
-                                        Toast.makeText(RegisterActivity.this, "User Registered Successfully!", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(RegisterActivity.this, "User Registered Successfully! Please verify your e-mail address", Toast.LENGTH_LONG).show();
+                                        FirebaseUser u = mAuth.getCurrentUser();
+                                        u.sendEmailVerification();
                                         progressBar.setVisibility(View.VISIBLE);
+
                                         startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                                     }
                                     else{

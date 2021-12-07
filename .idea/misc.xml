@@ -3,8 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/CryptoBroker/app/src/main/res/layout/activity_forgot_password.xml" value="0.36666666666666664" />
         <entry key="..\:/CryptoBroker/app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="..\:/CryptoBroker/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/CryptoBroker/app/src/main/res/layout/activity_profile.xml" value="0.67" />
         <entry key="..\:/CryptoBroker/app/src/main/res/layout/activity_register.xml" value="0.33" />
         <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoTrader/app/src/main/res/layout/activity_main.xml" value="0.264" />
       </map>
