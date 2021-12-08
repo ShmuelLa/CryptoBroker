@@ -1,25 +1,42 @@
 package com.example.cryptotrader;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.BinanceApiRestClient;
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+    Button register, login;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        System.out.println("sdsdsdasdfsdfsdf123123123123");
+
+        register = findViewById(R.id.register);
+        register.setOnClickListener(this);
+
+        login = findViewById(R.id.login);
+        login.setOnClickListener(this);
     }
 
     public void onButton2Click(View view) {
-        TextView helloText = findViewById(R.id.txtHello);
-        helloText.setText("Shooshool Doodool");
         new RetrieveFeedTask().execute();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.login:
+                startActivity(new Intent(this, LoginActivity.class));
+                break;
+            case R.id.register:
+                startActivity(new Intent(this, RegisterActivity.class));
+        }
     }
 }

@@ -2,10 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
-    tools:context=".MainActivity">
+    tools:context=".ProfileActivity">
 
     <TextView
         android:id="@+id/banner"
@@ -37,41 +37,45 @@
         app:layout_constraintRight_toRightOf="parent"
         />
 
-    <Button
-        android:id="@+id/login"
+
+    <TextView
+        android:id="@+id/emailAddrTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="E-Mail Address:"
+        android:textStyle="bold"
+        android:textColor="@color/white"
         app:layout_constraintTop_toBottomOf="@id/bannerDescription"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:ems="15"
-        android:layout_marginTop="220dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:textSize="20sp"
+        />
+    <TextView
+        android:id="@+id/emailAddr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/emailAddrTitle"
+        app:layout_constraintLeft_toLeftOf="@id/emailAddrTitle"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:textSize="18sp"
+        android:textColor="@color/white"
         />
 
     <Button
-        android:id="@+id/register"
+        android:id="@+id/logOut"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Register"
-        app:layout_constraintTop_toBottomOf="@id/login"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:ems="15"
-        android:layout_marginTop="20dp"
-        />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="?android:attr/progressBarStyleLarge"
-        app:layout_constraintTop_toTopOf="parent"
+        android:text="Logout"
+        android:backgroundTint="@color/cardview_light_background"
+        android:textColor="@color/purple_500"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:visibility="gone"
-        tools:ignore="MissingConstraints"
+        android:layout_marginBottom="40dp"
         />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
