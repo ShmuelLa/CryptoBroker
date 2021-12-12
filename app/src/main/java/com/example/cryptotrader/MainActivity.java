@@ -10,14 +10,19 @@ import android.widget.TextView;
 
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.BinanceApiRestClient;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     Button register, login;
+    FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser() != null){
+            startActivity(new Intent(this, ProfileActivity.class));
+        }
         register = findViewById(R.id.register);
         register.setOnClickListener(this);
 

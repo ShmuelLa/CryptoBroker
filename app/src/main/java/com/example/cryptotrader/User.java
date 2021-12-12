@@ -2,6 +2,7 @@ package com.example.cryptotrader;
 
 public class User {
     public String email;
+
     public User(){
 
     }
