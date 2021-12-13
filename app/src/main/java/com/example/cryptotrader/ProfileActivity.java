@@ -26,7 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener{
-    private Button logOut;
+    private Button logOut, tradeButton;
     private FirebaseUser user;
     private DatabaseReference ref;
     private TextView email;
@@ -50,8 +50,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         chart.setOnClickListener(this);
         add.setOnClickListener(this);
         mydialog = new Dialog(this);
-//        email = findViewById(R.id.emailAddr);
-//        logOut = findViewById(R.id.logOut);
+        setContentView(R.layout.activity_profile);
+        tradeButton = findViewById(R.id.tradebutton);
+        tradeButton.setOnClickListener(this);
 
         ref.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -84,6 +85,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.add:
                 showpop(view);
+                break;
+            case R.id.tradebutton:
+                startActivity(new Intent(this, TraderActivity.class));
                 break;
         }
     }

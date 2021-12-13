@@ -17,7 +17,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class ForgotPasswordActivity extends AppCompatActivity implements View.OnClickListener{
+public class ForgotPasswordActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText editTextEmail;
     private Button resetButton;
