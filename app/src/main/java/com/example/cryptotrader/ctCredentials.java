@@ -11,6 +11,11 @@ public class ctCredentials {
         keys = new LinkedList<>();
         secrets = new LinkedList<>();
     }
+
+    public ctCredentials(String key, String secret){
+        this.key = key;
+        this.secret = secret;
+    }
     public void addAccount(String key, String secret){
         try{
             if(! keys.contains(key) && ! secrets.contains(secret)){

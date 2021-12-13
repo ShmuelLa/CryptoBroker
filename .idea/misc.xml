@@ -4,10 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/CryptoBroker/app/src/main/res/layout/activity_forgot_password.xml" value="0.36666666666666664" />
+        <entry key="..\:/CryptoBroker/app/src/main/res/layout/activity_home.xml" value="0.20520833333333333" />
         <entry key="..\:/CryptoBroker/app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="..\:/CryptoBroker/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/CryptoBroker/app/src/main/res/layout/activity_profile.xml" value="0.67" />
         <entry key="..\:/CryptoBroker/app/src/main/res/layout/activity_register.xml" value="0.33" />
+        <entry key="..\:/CryptoBroker/app/src/main/res/layout/popup.xml" value="0.20520833333333333" />
         <entry key="..\:/Users/Gidon/Desktop/CryptoBroker/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.14635416666666667" />
         <entry key="..\:/Users/Gidon/Desktop/CryptoBroker/app/src/main/res/drawable/ic_baseline_alternate_email_24.xml" value="0.14635416666666667" />
         <entry key="..\:/Users/Gidon/Desktop/CryptoBroker/app/src/main/res/drawable/ic_baseline_person_outline_24.xml" value="0.14635416666666667" />

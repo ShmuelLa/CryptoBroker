@@ -3,9 +3,7 @@ package com.example.cryptotrader;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.widget.EditText;
 import android.widget.Toast;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,7 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -92,7 +89,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
     private void showpop(View view){
-        mydialog.setContentView(R.layout.popup);
+        mydialog.setContentView(R.layout.popup_add);
         TextView close_pop = mydialog.findViewById(R.id.txtclose);
         close_pop.setOnClickListener(new View.OnClickListener() {
             @Override

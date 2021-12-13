@@ -14,25 +14,17 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     Button register, login;
-    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mAuth = FirebaseAuth.getInstance();
-        if(mAuth.getCurrentUser() != null){
-            startActivity(new Intent(this, ProfileActivity.class));
-        }
+
         register = findViewById(R.id.register);
         register.setOnClickListener(this);
 
         login = findViewById(R.id.login);
         login.setOnClickListener(this);
-    }
-
-    public void onButton2Click(View view) {
-        new RetrieveFeedTask().execute();
     }
 
     @Override
