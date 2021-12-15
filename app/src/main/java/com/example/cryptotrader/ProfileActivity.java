@@ -54,7 +54,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         ref.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User userProfile = snapshot.getValue(User.class);
+                ctUser userProfile = snapshot.getValue(ctUser.class);
                 if(userProfile != null){
 //                    String emailStr = userProfile.email;
 //                    email.setText(emailStr);

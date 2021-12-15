@@ -1,12 +1,12 @@
 package com.example.cryptotrader;
 
-public class User {
+public class ctUser {
     public String email;
 
-    public User(){
+    public ctUser(){
 
     }
-    public User(String email){
+    public ctUser(String email){
         this.email = email;
     }
 }
