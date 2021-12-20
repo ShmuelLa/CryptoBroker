@@ -7,20 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".TraderActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="66dp"
-        android:background="#50ffffff"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
     <ImageButton
         android:id="@+id/profile"
         android:layout_width="85dp"
@@ -34,15 +20,79 @@
         />
 
     <Spinner
-        android:id="@+id/spinner1"
+        android:id="@+id/clientSpinner"
         android:layout_width="match_parent"
         android:layout_height="54dp"
         android:background="@android:drawable/btn_dropdown"
-        android:spinnerMode="dropdown"
-
+        android:spinnerMode="dialog"
+        android:backgroundTint="#50ffffff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/profile"
         app:layout_constraintVertical_bias="0.0" />
+
+    <Spinner
+        android:id="@+id/optionsSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dialog"
+        android:backgroundTint="#50ffffff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/clientSpinner"
+        app:layout_constraintVertical_bias="0.043" />
+
+    <Spinner
+        android:id="@+id/symbolFundSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:backgroundTint="#50ffffff"
+        android:spinnerMode="dialog"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/optionsSpinner"
+        app:layout_constraintVertical_bias="0.043" />
+
+    <Spinner
+        android:id="@+id/symbolTargetSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:backgroundTint="#50ffffff"
+        android:spinnerMode="dialog"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/symbolFundSpinner"
+        app:layout_constraintVertical_bias="0.043" />
+
+    <EditText
+        android:id="@+id/fundsAmountText"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginTop="4.3dp"
+        android:background="#50ffffff"
+        android:hint="Funds Amount"
+        app:layout_constraintTop_toBottomOf="@id/symbolTargetSpinner"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <EditText
+        android:id="@+id/marketPriceText"
+        android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_marginTop="4.3dp"
+        android:background="#50ffffff"
+        android:hint="Coint Market Value"
+        app:layout_constraintTop_toBottomOf="@id/fundsAmountText"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/marketPriceText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

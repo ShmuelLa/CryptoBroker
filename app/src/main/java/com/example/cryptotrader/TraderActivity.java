@@ -1,7 +1,5 @@
 package com.example.cryptotrader;
 
-import static com.binance.api.client.domain.account.NewOrder.limitSell;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,12 +7,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-
-import com.binance.api.client.BinanceApiAsyncRestClient;
-import com.binance.api.client.BinanceApiCallback;
-import com.binance.api.client.BinanceApiClientFactory;
-import com.binance.api.client.domain.TimeInForce;
-import com.binance.api.client.domain.account.Account;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,10 +20,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TraderActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button sellButton;
     private DatabaseReference accounts_db;
     private FirebaseUser user;
-    private int numberOfClients;
+    private String[] tradeOptions = {"Buy", "Sell", "Limit Buy", "Limit Sell", "Futures Buy", "Futures Sell"};
+    private String[] symbolFundOptions = {"USDT", "BUSD", "BNB"};
+    private String[] symbolTargetOptions = {"BTC", "ETH", "ADA", "MANA", "BNB"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,22 +32,30 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_trader);
         user = FirebaseAuth.getInstance().getCurrentUser();
         accounts_db = FirebaseDatabase.getInstance().getReference("Accounts");
-        Spinner dropdown = findViewById(R.id.spinner1);
-        ArrayList<String> items = new ArrayList<>();
-        items.add("All");
+        Spinner clientDropdown = findViewById(R.id.clientSpinner);
+        Spinner tradeOptionsDropdown = findViewById(R.id.optionsSpinner);
+        Spinner symbolFundDropdown = findViewById(R.id.symbolFundSpinner);
+        Spinner symbolTargetDropdown = findViewById(R.id.symbolTargetSpinner);
+        ArrayList<String> clientsList = new ArrayList<>();
+        clientsList.add("All");
         accounts_db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if(task.isSuccessful()){
                     GenericTypeIndicator<HashMap<String, ctCredentials>> gType = new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
                     HashMap<String,  ctCredentials> map = task.getResult().getValue(gType);
-                    map.forEach((clientName, clientTokens) -> items.add(clientName));
+                    map.forEach((clientName, clientTokens) -> clientsList.add(clientName));
                 }
             }
         });
-        System.out.println(items.toString());
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
-        dropdown.setAdapter(adapter);
+        ArrayAdapter<String> clientsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, clientsList);
+        ArrayAdapter<String> tradeOptionsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, tradeOptions);
+        ArrayAdapter<String> symbolFundsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, symbolFundOptions);
+        ArrayAdapter<String> symbolTargetAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, symbolTargetOptions);
+        clientDropdown.setAdapter(clientsAdapter);
+        tradeOptionsDropdown.setAdapter(tradeOptionsAdapter);
+        symbolFundDropdown.setAdapter(symbolFundsAdapter);
+        symbolTargetDropdown.setAdapter(symbolTargetAdapter);
     }
 
     @Override
