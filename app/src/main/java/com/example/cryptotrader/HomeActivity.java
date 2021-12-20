@@ -57,6 +57,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 //        key_input = findViewById(R.id.key_input);
 //        secret_input = findViewById(R.id.secret_input);
     }
+
     @Override
     public void onClick(View view) {
         switch(view.getId()){
@@ -70,7 +71,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 showPopupAdd(view);
                 break;
             case R.id.profile:
-                showPopupTradeChooser(view);
                 startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
                 break;
         }
@@ -154,6 +154,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         cancelTradeButton = myDialog.findViewById(R.id.cancelTradeButton);
+        cancelTradeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(HomeActivity.this, CancelOrderActivity.class));
+            }
+        });
         closePopupText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
