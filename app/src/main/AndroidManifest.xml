@@ -12,6 +12,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CryptoTrader">
         <activity
+            android:name=".NavigationDrawerActivity"
+            android:exported="false"
+            android:label="@string/title_activity_navigation_drawer"
+            android:theme="@style/Theme.CryptoTrader.NoActionBar" />
+        <activity
+            android:name=".CancelOrderActivity"
+            android:exported="false" />
+        <activity
             android:name=".HomeActivity"
             android:exported="false" />
         <activity
