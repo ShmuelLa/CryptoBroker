@@ -38,7 +38,7 @@ public class CancelOrderActivity extends AppCompatActivity {
         clientSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                String chosenUser = ctUtils.getSpinnerChosenText(clientSpinner);
             }
 
             @Override

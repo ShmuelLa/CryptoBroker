@@ -45,10 +45,14 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
         symbolFundSpinner = findViewById(R.id.symbolFundSpinner);
         symbolTargetSpinner = findViewById(R.id.symbolTargetSpinner);
         clientsList = ctAccount.getClientNamesList(accountsDB, user);
-        ArrayAdapter<String> clientsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, clientsList);
-        ArrayAdapter<String> tradeOptionsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, tradeOptions);
-        ArrayAdapter<String> symbolFundsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, symbolFundOptions);
-        ArrayAdapter<String> symbolTargetAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, symbolTargetOptions);
+        ArrayAdapter<String> clientsAdapter = new ArrayAdapter<>
+                (this, android.R.layout.simple_spinner_dropdown_item, clientsList);
+        ArrayAdapter<String> tradeOptionsAdapter = new ArrayAdapter<>
+                (this, android.R.layout.simple_spinner_dropdown_item, tradeOptions);
+        ArrayAdapter<String> symbolFundsAdapter = new ArrayAdapter<>
+                (this, android.R.layout.simple_spinner_dropdown_item, symbolFundOptions);
+        ArrayAdapter<String> symbolTargetAdapter = new ArrayAdapter<>
+                (this, android.R.layout.simple_spinner_dropdown_item, symbolTargetOptions);
         clientSpinner.setAdapter(clientsAdapter);
         tradeOptionsSpinner.setAdapter(tradeOptionsAdapter);
         symbolFundSpinner.setAdapter(symbolFundsAdapter);
@@ -61,7 +65,7 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
         System.out.println("ZABABIR");
         if (v.getId() == R.id.initiateOrderButton) {
             System.out.println("ZABABIR222222");
-            if (getSpinnerChosenText(clientSpinner) == "All") {
+            if (ctUtils.getSpinnerChosenText(clientSpinner) == "All") {
                 System.out.println("ZABABIR");
             }
             else {
@@ -99,10 +103,4 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
 //            }
 //        });
 //    }
-
-    public String getSpinnerChosenText(Spinner spinner) {
-        TextView textView = (TextView)spinner.getSelectedView();
-        String result = textView.getText().toString();
-        return result;
-    }
 }
