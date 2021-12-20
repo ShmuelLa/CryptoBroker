@@ -15,6 +15,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.binance.api.client.BinanceApiAsyncRestClient;
+import com.binance.api.client.BinanceApiClientFactory;
+import com.binance.api.client.domain.account.Account;
+import com.binance.api.client.domain.market.TickerStatistics;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -78,8 +82,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     GenericTypeIndicator<HashMap<String, ctCredentials>> gType = new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
                     HashMap<String,  ctCredentials> map = task.getResult().getValue(gType);
                     map.forEach((clientName, clientTokens)
-                            -> System.out.println(clientName + ": "
-                            + clientTokens._key + ", " + clientTokens._secret));
+                            ->
+                            {
+                                BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(clientTokens.getKey(), clientTokens.getSecret());
+                                BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
+                                Account account = client.getAccount();
+                                System.out.println(account.getBalances());
+                            }
+                    );
                 }
             }
         });

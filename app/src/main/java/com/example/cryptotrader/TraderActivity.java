@@ -1,13 +1,10 @@
 package com.example.cryptotrader;
 
 import static com.binance.api.client.domain.account.NewOrder.limitSell;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-
 import com.binance.api.client.BinanceApiAsyncRestClient;
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.domain.TimeInForce;

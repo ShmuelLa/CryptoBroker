@@ -6,6 +6,7 @@ public class ctUser {
     public ctUser(){
 
     }
+
     public ctUser(String email){
         this.email = email;
     }
