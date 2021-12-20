@@ -66,11 +66,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
-        if(email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             editTextEmail.setError("Invalid E-Mail address! Please provide a valid address");
             editTextEmail.requestFocus();
         }
-        if(password.length() < 6){
+        if (password.length() < 6){
             editTextPassword.setError("Invalid Password! Please provide at least 6 characters");
             editTextPassword.requestFocus();
             return;
@@ -83,14 +83,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if(user.isEmailVerified())
+                    if (user.isEmailVerified())
                         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                    else{
+                    else {
                         user.sendEmailVerification();
                         Toast.makeText(LoginActivity.this, "Verification mail sent again. Please check your e-mail",Toast.LENGTH_LONG).show();
                     }
                 }
-                else{
+                else {
                     Toast.makeText(LoginActivity.this, "Failed to Login! Please try again", Toast.LENGTH_LONG).show();
                 }
             }

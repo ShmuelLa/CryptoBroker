@@ -22,6 +22,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+
+import java.util.HashMap;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -68,11 +71,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void showpop_wallet(View view) {
-        accounts_db.child("Gilad").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        accounts_db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-                System.out.println(task.getResult().getValue(ctCredentials.class).key);
-
+                if(task.isSuccessful()){
+                    GenericTypeIndicator<HashMap<String, ctCredentials>> gType = new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
+                    HashMap<String,  ctCredentials> map = task.getResult().getValue(gType);
+                    map.forEach((clientName, clientTokens)
+                            -> System.out.println(clientName + ": "
+                            + clientTokens._key + ", " + clientTokens._secret));
+                }
             }
         });
     }
@@ -89,14 +97,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 String a_name = account_name.getText().toString().trim();
                 String key = key_input.getText().toString().trim();
                 String secret = secret_input.getText().toString().trim();
-                accounts_db.child(user.getUid()).child(a_name).setValue(new ctCredentials(key,secret)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                accounts_db.child(user.getUid()).child(a_name)
+                        .setValue(new ctCredentials(key,secret))
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(HomeActivity.this, "Account added successfully", Toast.LENGTH_LONG).show();
+                        if (task.isSuccessful()) {
+                            Toast.makeText(HomeActivity.this,
+                                    "Account added successfully",
+                                    Toast.LENGTH_LONG).show();
                             mydialog.dismiss();
                         }
-                        else{
+                        else {
                             Toast.makeText(HomeActivity.this, "Something went wrong. Please try again", Toast.LENGTH_LONG).show();
 
                         }
