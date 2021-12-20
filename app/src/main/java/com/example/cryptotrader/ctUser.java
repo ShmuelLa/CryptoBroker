@@ -4,7 +4,6 @@ public class ctUser {
     public String email;
 
     public ctUser(){
-
     }
 
     public ctUser(String email){

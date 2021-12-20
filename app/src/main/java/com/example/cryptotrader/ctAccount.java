@@ -1,16 +1,30 @@
 package com.example.cryptotrader;
 
-public class ctAccount {
-    String _id;
-    String _api_key;
-    String _api_secret;
-    String _client_name;
-    int _total_usdt;
-    int _locked_usdt;
-    int _free_usdt;
+import com.binance.api.client.BinanceApiAsyncRestClient;
+import com.binance.api.client.BinanceApiCallback;
+import com.binance.api.client.BinanceApiClientFactory;
+import com.binance.api.client.domain.account.Account;
 
-    public ctAccount(String key, String secret) {
-        _api_key = key;
-        _api_secret = secret;
+public class ctAccount {
+    ctCredentials credentials;
+    String id;
+    String clientName;
+    int totalUSDT;
+    int lockedUSDT;
+    int freeUSDT;
+
+    public ctAccount(ctCredentials otherCredentials, String name) {
+        credentials = otherCredentials;
+        clientName = name;
     }
+
+//    BinanceApiClientFactory factory = BinanceApiClientFactory
+//            .newInstance(otherCredentials.getKey(), otherCredentials.getSecret());
+//    BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
+//        client.getAccount(new BinanceApiCallback<Account>() {
+//        @Override
+//        public void onResponse(Account account) {
+//            System.out.println(clientName + "  " + account.getBalances());
+//        }
+//    });
 }

@@ -16,7 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.binance.api.client.BinanceApiAsyncRestClient;
+import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiClientFactory;
+import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.market.TickerStatistics;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -65,12 +67,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 showpop_wallet(view);
                 break;
             case R.id.chart:
+                startActivity(new Intent(HomeActivity.this, TraderActivity.class));
                 break;
             case R.id.add:
                 showpop_add(view);
                 break;
             case R.id.profile:
                 startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
+                break;
         }
     }
 
@@ -84,10 +88,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     map.forEach((clientName, clientTokens)
                             ->
                             {
-                                BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(clientTokens.getKey(), clientTokens.getSecret());
+                                BinanceApiClientFactory factory = BinanceApiClientFactory
+                                        .newInstance(clientTokens.getKey(), clientTokens.getSecret());
                                 BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-                                Account account = client.getAccount();
-                                System.out.println(account.getBalances());
+                                client.getAccount(new BinanceApiCallback<Account>() {
+                                    @Override
+                                    public void onResponse(Account account) {
+                                        System.out.println(clientName + "  " + account.getBalances());
+                                    }
+                                });
                             }
                     );
                 }
@@ -120,7 +129,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         else {
                             Toast.makeText(HomeActivity.this, "Something went wrong. Please try again", Toast.LENGTH_LONG).show();
-
                         }
                     }
                 });
@@ -135,12 +143,5 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         });
         mydialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mydialog.show();
-
-
-
-
-
-
-
     }
 }

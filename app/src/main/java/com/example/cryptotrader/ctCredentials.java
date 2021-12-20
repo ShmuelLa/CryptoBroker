@@ -3,19 +3,22 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ctCredentials {
-    private String _key;
-    private String _secret;
+    private String key;
+    private String secret;
+
+    public ctCredentials(){
+    }
 
     public ctCredentials(String key, String secret){
-        this._key = key;
-        this._secret = secret;
+        this.key = key;
+        this.secret = secret;
     }
 
     public String getKey() {
-        return this._key;
+        return this.key;
     }
 
     public String getSecret() {
-        return this._secret;
+        return this.secret;
     }
 }
