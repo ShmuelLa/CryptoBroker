@@ -45,6 +45,7 @@ public class CancelOrderActivity extends AppCompatActivity {
                 .simple_spinner_dropdown_item, clientsList);
         clientSpinner.setAdapter(clientsAdapter);
         clientSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String chosenUser = ctUtils.getSpinnerChosenText(clientSpinner);
@@ -69,7 +70,7 @@ public class CancelOrderActivity extends AppCompatActivity {
             String tmpOrder = order.getSymbol() + " " + order.getType() + " "  + order.getPrice();
             result.add(tmpOrder);
         }
-        if (result.size() < 1 || result.size() == 0) {
+        if (result.size() < 1) {
             result.add("None");
         }
         return result;

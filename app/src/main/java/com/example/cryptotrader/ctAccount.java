@@ -32,6 +32,15 @@ public class ctAccount {
         clientName = name;
     }
 
+    /**
+     * Returns a list of current client names as String.
+     * This method is for use on spinners and other methods that require a String representation
+     * of client name.
+     *
+     * @param db FireBase DB object of the current connected user
+     * @param user FireBase user object of the current connected user
+     * @return ArrayList of name representing the current user clients
+     */
     public static ArrayList<String> getClientNamesList(DatabaseReference db, FirebaseUser user) {
         ArrayList<String> result = new ArrayList<>();
         result.add("All");
@@ -49,6 +58,15 @@ public class ctAccount {
         return result;
     }
 
+    /**
+     * Returns a List of BinanceAPI Order objects the are currently open for a specific requested
+     * user (via username).
+     *
+     * @param clientName The current client name as shown on a spinner for example
+     * @param accountsDB FireBase DB object of the current connected user
+     * @param user FireBase user object of the current connected user
+     * @return List of BinanceAPI Order objects
+     */
     public static List<Order> getAllOpenOrdersList(String clientName, DatabaseReference accountsDB, FirebaseUser user) {
         accountsDB.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override

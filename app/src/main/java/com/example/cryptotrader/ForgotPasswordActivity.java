@@ -2,7 +2,6 @@ package com.example.cryptotrader;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,14 +26,11 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
-
         editTextEmail = findViewById(R.id.email);
         resetButton = findViewById(R.id.forgotButton);
         progressBar = findViewById(R.id.progressBar);
         mAuth = FirebaseAuth.getInstance();
-
         resetButton.setOnClickListener(this);
-
     }
 
     @Override
@@ -69,6 +64,5 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
                 }
             }
         });
-
     }
 }
