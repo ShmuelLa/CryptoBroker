@@ -1,5 +1,6 @@
 package com.example.cryptotrader;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,12 +9,22 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.binance.api.client.BinanceApiAsyncRestClient;
+import com.binance.api.client.BinanceApiCallback;
+import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.domain.account.Order;
+import com.binance.api.client.domain.account.request.OrderRequest;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,8 +40,8 @@ public class CancelOrderActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        ctAccount currentAccount = new ctAccount(executor);
+//        ExecutorService executor = Executors.newSingleThreadExecutor();
+//        ctAccount currentAccount = new ctAccount(executor);
         setContentView(R.layout.activity_cancel_order);
         clientSpinner = findViewById(R.id.clientSpinner);
         openOrdersSpinner = findViewById(R.id.openOrdersSpinner);
