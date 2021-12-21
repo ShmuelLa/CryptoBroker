@@ -25,7 +25,7 @@ public class ctAccount {
     int totalUSDT;
     int lockedUSDT;
     int freeUSDT;
-    public static List<Order> result = new ArrayList<>();
+    public static ArrayList<Order> result = new ArrayList<>();
 
     public ctAccount(ctCredentials otherCredentials, String name) {
         credentials = otherCredentials;
@@ -43,7 +43,7 @@ public class ctAccount {
      */
     public static ArrayList<String> getClientNamesList(DatabaseReference db, FirebaseUser user) {
         ArrayList<String> result = new ArrayList<>();
-        result.add("All");
+        result.add("None");
         db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -62,12 +62,12 @@ public class ctAccount {
      * Returns a List of BinanceAPI Order objects the are currently open for a specific requested
      * user (via username).
      *
-     * @param clientName The current client name as shown on a spinner for example
+     * @param argClientName The current client name as shown on a spinner for example
      * @param accountsDB FireBase DB object of the current connected user
      * @param user FireBase user object of the current connected user
      * @return List of BinanceAPI Order objects
      */
-    public static List<Order> getAllOpenOrdersList(String clientName, DatabaseReference accountsDB, FirebaseUser user) {
+    public static ArrayList<Order> getAllOpenOrdersList(String argClientName, DatabaseReference accountsDB, FirebaseUser user) {
         accountsDB.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -75,16 +75,17 @@ public class ctAccount {
                     GenericTypeIndicator<HashMap<String, ctCredentials>> gType =
                             new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
                     HashMap<String,  ctCredentials> map = task.getResult().getValue(gType);
-                    map.forEach((clientName, clientTokens) ->
+                    map.forEach((clientNameItr, clientTokens) ->
                     {
-                        if (clientName.equals(clientName)) {
+                        System.out.println("!!!!!! " + clientNameItr + ", " + clientTokens + " !!!!!!!" );
+                        if (clientNameItr.equals(argClientName)) {
                             BinanceApiClientFactory factory = BinanceApiClientFactory
                                     .newInstance(clientTokens.getKey(), clientTokens.getSecret());
                             BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
                             client.getOpenOrders(new OrderRequest(null), new BinanceApiCallback<List<Order>>() {
                                 @Override
                                 public void onResponse(List<Order> orders) {
-                                    result = orders;
+                                    result = new ArrayList(orders);
                                 }
                             });
                         }

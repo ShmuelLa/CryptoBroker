@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.binance.api.client.BinanceApiAsyncRestClient;
@@ -37,6 +38,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private EditText accountName, keyInput, secretInput;
     private DatabaseReference accounts_db;
     private FirebaseUser user;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         profile.setOnClickListener(this);
         user = FirebaseAuth.getInstance().getCurrentUser();
         accounts_db = FirebaseDatabase.getInstance().getReference("Accounts");
+        progressBar = findViewById(R.id.progressBar);
 //        account_name = findViewById(R.id.account_name);
 //        key_input = findViewById(R.id.key_input);
 //        secret_input = findViewById(R.id.secret_input);
@@ -71,7 +74,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 showPopupAdd(view);
                 break;
             case R.id.profile:
+                progressBar.setVisibility(View.VISIBLE);
                 startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
+                progressBar.setVisibility(View.GONE);
                 break;
         }
     }

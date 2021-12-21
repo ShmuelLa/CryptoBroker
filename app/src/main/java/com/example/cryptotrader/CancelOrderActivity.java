@@ -30,7 +30,6 @@ public class CancelOrderActivity extends AppCompatActivity {
     private FirebaseUser user;
     private Spinner clientSpinner, openOrdersSpinner;
     private ArrayList<String> clientsList = new ArrayList<>();
-    private List<Order> orderList;
     private ArrayList<String> normalizedOrderList;
 
     @Override
@@ -38,6 +37,7 @@ public class CancelOrderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cancel_order);
         clientSpinner = findViewById(R.id.clientSpinner);
+        openOrdersSpinner = findViewById(R.id.openOrdersSpinner);
         user = FirebaseAuth.getInstance().getCurrentUser();
         accountsDB = FirebaseDatabase.getInstance().getReference("Accounts");
         clientsList = ctAccount.getClientNamesList(accountsDB, user);
@@ -48,10 +48,45 @@ public class CancelOrderActivity extends AppCompatActivity {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String chosenUser = ctUtils.getSpinnerChosenText(clientSpinner);
-                orderList = ctAccount.getAllOpenOrdersList(chosenUser, accountsDB, user);
-                System.out.println(orderList.toString());
-                normalizedOrderList = normalizeOrderListForSpinner(orderList);
+                String chosenUser = clientSpinner.getSelectedItem().toString();
+
+                accountsDB.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            GenericTypeIndicator<HashMap<String, ctCredentials>> gType =
+                                    new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
+                            HashMap<String,  ctCredentials> map = task.getResult().getValue(gType);
+                            map.forEach((clientNameItr, clientTokens) ->
+                            {
+                                if (clientNameItr.equals(chosenUser)) {
+                                    BinanceApiClientFactory factory = BinanceApiClientFactory
+                                            .newInstance(clientTokens.getKey(), clientTokens.getSecret());
+                                    BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
+                                    client.getOpenOrders(new OrderRequest(null), new BinanceApiCallback<List<Order>>() {
+                                        @Override
+                                        public void onResponse(List<Order> orders) {
+                                            ArrayList<Order> orderList = new ArrayList(orders);
+                                            ArrayAdapter<String> ordersAdapter = new ArrayAdapter(CancelOrderActivity.this, android.R.layout
+                                                    .simple_spinner_dropdown_item, normalizeOrderListForSpinner(orderList));
+                                            openOrdersSpinner.setAdapter(ordersAdapter);
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                });
+
+//                ArrayList<Order> orderList = ctAccount.getAllOpenOrdersList(chosenUser, accountsDB, user);
+//                System.out.println(orderList.toString());
+//                ArrayAdapter<String> ordersAdapter = new ArrayAdapter(CancelOrderActivity.this, android.R.layout
+//                        .simple_spinner_dropdown_item, orderList);
+//                openOrdersSpinner.setAdapter(ordersAdapter);
+//                String chosenUser = ctUtils.getSpinnerChosenText(clientSpinner);
+//                orderList = ctAccount.getAllOpenOrdersList(chosenUser, accountsDB, user);
+//                System.out.println(orderList.toString());
+//                normalizedOrderList = normalizeOrderListForSpinner(orderList);
             }
 
             @Override
@@ -64,7 +99,7 @@ public class CancelOrderActivity extends AppCompatActivity {
 
     }
 
-    public ArrayList<String> normalizeOrderListForSpinner(List<Order> beforeList) {
+    public ArrayList<String> normalizeOrderListForSpinner(ArrayList<Order> beforeList) {
         ArrayList<String> result = new ArrayList<>();
         for (Order order : beforeList) {
             String tmpOrder = order.getSymbol() + " " + order.getType() + " "  + order.getPrice();

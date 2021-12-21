@@ -2,12 +2,18 @@ package com.example.cryptotrader;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.binance.api.client.domain.account.Trade;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,6 +36,8 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
     private Spinner tradeOptionsSpinner;
     private Spinner symbolFundSpinner;
     private Spinner symbolTargetSpinner;
+    private ProgressBar progressBar;
+    private ImageButton profileButton;
     ArrayList<String> clientsList = new ArrayList<>();
 
     @Override
@@ -56,28 +64,27 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
         tradeOptionsSpinner.setAdapter(tradeOptionsAdapter);
         symbolFundSpinner.setAdapter(symbolFundsAdapter);
         symbolTargetSpinner.setAdapter(symbolTargetAdapter);
+        progressBar = findViewById(R.id.progressBar);
 //        spinnerColletion(clientSpinner, tradeOptionsSpinner, symbolFundSpinner, symbolTargetSpinner);
     }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.initiateOrderButton) {
-            if (ctUtils.getSpinnerChosenText(clientSpinner).equals("All")) {
-            }
-            else {
-            }
-//            switch (getSpinnerChosenText(clientSpinner)) {
-//                case R.id.initiateOrderButton:
-//                    try {
-//                        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance("", "");
-//                        BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-//                        client.newOrder(limitSell("ETHUSDT", TimeInForce.GTC, "0.2", "5000"),
-//                                response -> System.out.println(response));
-//                    } catch (Exception e) {
-//                        System.out.println(e);
-//                    }
-//                    break;
-//            }
+
+        switch (v.getId()){
+            case R.id.initiateOrderButton:
+                switch (ctUtils.getSpinnerChosenText(clientSpinner)) {
+                    case "All":
+                        break;
+                }
+                break;
+            case R.id.profile:
+                progressBar.setVisibility(View.VISIBLE);
+                startActivity(new Intent(TraderActivity.this, ProfileActivity.class));
+                progressBar.setVisibility(View.GONE);
+                break;
+        }
+
         }
     }
 
@@ -98,4 +105,3 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
 //            }
 //        });
 //    }
-}

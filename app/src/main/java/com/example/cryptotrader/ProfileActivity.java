@@ -3,6 +3,7 @@ package com.example.cryptotrader;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.app.Dialog;
 import android.content.Intent;
@@ -32,6 +33,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private ImageButton chart;
     private ImageButton add;
     private Dialog mydialog;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +52,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_profile);
         tradeButton = findViewById(R.id.tradebutton);
         tradeButton.setOnClickListener(this);
-
+        progressBar = findViewById(R.id.progressBar);
         ref.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
