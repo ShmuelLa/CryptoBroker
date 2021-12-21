@@ -29,7 +29,7 @@
         android:id="@+id/mainTraderButton"
         android:layout_width="281dp"
         android:layout_height="60dp"
-        android:text="Create New Order"
+        android:text="Yes, Engage"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,44 +39,12 @@
         android:id="@+id/cancelTradeButton"
         android:layout_width="281dp"
         android:layout_height="60dp"
-        android:text="Cancel Open Order"
+        android:text="No, Take me Back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainTraderButton"
         app:layout_constraintVertical_bias="0.345" />
 
-    <TextView
-        android:id="@+id/warningMsg"
-        android:layout_width="246dp"
-        android:layout_height="60dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="84dp"
-        android:gravity="center_vertical"
-        android:text="You are about to delete all open orders, Are you sure?"
-        android:textColor="@color/white"
-        android:textSize="15dp"
-
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.544"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-
-        android:layout_width="148dp"
-        android:layout_height="74dp"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical"
-        android:text="WARNING!"
-        android:textColor="@color/white"
-        android:textSize="30dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/warningMsg"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
