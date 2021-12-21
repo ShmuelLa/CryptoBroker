@@ -40,14 +40,12 @@ public class CancelOrderActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        ExecutorService executor = Executors.newSingleThreadExecutor();
-//        ctAccount currentAccount = new ctAccount(executor);
         setContentView(R.layout.activity_cancel_order);
         clientSpinner = findViewById(R.id.clientSpinner);
         openOrdersSpinner = findViewById(R.id.openOrdersSpinner);
         user = FirebaseAuth.getInstance().getCurrentUser();
         accountsDB = FirebaseDatabase.getInstance().getReference("Accounts");
-        ArrayList<String> clientsList = ctAccount.getClientNamesListAsync(accountsDB, user);
+        ArrayList<String> clientsList = ctAccount.getClientNamesListAsync(accountsDB, user, "None");
         ArrayAdapter<String> clientsAdapter = new ArrayAdapter<>(this, android.R.layout
                 .simple_spinner_dropdown_item, clientsList);
         clientSpinner.setAdapter(clientsAdapter);
@@ -129,7 +127,6 @@ public class CancelOrderActivity extends AppCompatActivity {
             result.add("None");
         }
         return result;
-
     }
 
     void showOpenOrders() {

@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -28,20 +29,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         editTextEmail = findViewById(R.id.email);
         editTextPassword = findViewById(R.id.password);
-
         forgotPassword = findViewById(R.id.forgotpassword);
         forgotPassword.setOnClickListener(this);
         register = findViewById(R.id.register);
         register.setOnClickListener(this);
-
         login = findViewById(R.id.loginButton);
         login.setOnClickListener(this);
         progressBar = findViewById(R.id.progressBar);
         mAuth = FirebaseAuth.getInstance();
-
     }
 
     @Override
@@ -63,7 +60,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void userLogin() {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
-
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             editTextEmail.setError("Invalid E-Mail address! Please provide a valid address");
             editTextEmail.requestFocus();
@@ -73,10 +69,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             editTextPassword.requestFocus();
             return;
         }
-
         progressBar.setVisibility(View.VISIBLE);
-
-        mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        mAuth.signInWithEmailAndPassword(email,password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
@@ -87,12 +82,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                     else {
                         user.sendEmailVerification();
-                        Toast.makeText(LoginActivity.this, "Verification mail sent again. Please check your e-mail",Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this
+                                , "Verification mail sent again. Please check your e-mail"
+                                ,Toast.LENGTH_LONG).show();
                         progressBar.setVisibility(View.GONE);
                     }
                 }
                 else {
-                    Toast.makeText(LoginActivity.this, "Failed to Login! Please try again", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this
+                            , "Failed to Login! Please try again", Toast.LENGTH_LONG).show();
                     progressBar.setVisibility(View.GONE);
                 }
             }

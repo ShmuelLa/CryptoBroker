@@ -1,6 +1,7 @@
 package com.example.cryptotrader;
 
 import static com.binance.api.client.domain.account.NewOrder.limitBuy;
+import static com.binance.api.client.domain.account.NewOrder.limitSell;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -61,7 +62,7 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
         tradeOptionsSpinner = findViewById(R.id.optionsSpinner);
         symbolFundSpinner = findViewById(R.id.symbolFundSpinner);
         symbolTargetSpinner = findViewById(R.id.symbolTargetSpinner);
-        clientsList = ctAccount.getClientNamesListAsync(accountsDB, user);
+        clientsList = ctAccount.getClientNamesListAsync(accountsDB, user, "All");
         ArrayAdapter<String> clientsAdapter = new ArrayAdapter<>
                 (this, android.R.layout.simple_spinner_dropdown_item, clientsList);
         ArrayAdapter<String> tradeOptionsAdapter = new ArrayAdapter<>
@@ -81,23 +82,20 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-
         if (v.getId() == R.id.initiateOrderButton) {
             String clientChoice = ctUtils.getSpinnerChosenText(clientSpinner);
             String tradeOptionChoice = ctUtils.getSpinnerChosenText(tradeOptionsSpinner);
             String symbolFundChoice = ctUtils.getSpinnerChosenText(symbolFundSpinner);
             String symbolTargetChoice = ctUtils.getSpinnerChosenText(symbolTargetSpinner);
             String symbol = symbolTargetChoice + symbolFundChoice;
-            String fundTextString = fundText.getText().toString().trim();
-            String priceTextString = priceText.getText().toString().trim();
-            float funds = Float.parseFloat(fundTextString);
-            float price = Float.parseFloat(priceTextString);
+            String fundsAmountTextString = fundText.getText().toString().trim();
+            String marketPriceTextString = priceText.getText().toString().trim();
             if (clientChoice.equals("All")) {
                 if (tradeOptionChoice.equals("Limit Buy") || tradeOptionChoice.equals("Limit Sell")) {
 //                    initiateLimitOrder(symbol);
                 }
                 System.out.println(clientChoice);
-                System.out.println(tradeOptionChoice + " " + symbol + " " + funds + " " + price);
+                System.out.println(tradeOptionChoice + " " + symbol + " " + fundsAmountTextString + " " + marketPriceTextString);
             }
             else {
                 if (tradeOptionChoice.equals("Limit Buy") || tradeOptionChoice.equals("Limit Sell")) {
@@ -114,7 +112,7 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
                                         BinanceApiClientFactory factory = BinanceApiClientFactory
                                                 .newInstance(clientTokens.getKey(), clientTokens.getSecret());
                                         BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-                                        client.newOrder(limitBuy(symbol, TimeInForce.GTC, fundTextString, priceTextString)
+                                        client.newOrder(limitSell(symbol, TimeInForce.GTC, fundsAmountTextString, marketPriceTextString)
                                                 ,response -> System.out.println(response));
                                     }
                                 });
