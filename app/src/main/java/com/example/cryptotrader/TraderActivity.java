@@ -3,6 +3,7 @@ package com.example.cryptotrader;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -18,6 +19,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class TraderActivity extends AppCompatActivity implements View.OnClickListener {
     private DatabaseReference accountsDB;
@@ -34,6 +37,9 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        ctAccount currentAccount = new ctAccount(executor);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trader);
         sendOrderButton = findViewById(R.id.initiateOrderButton);
@@ -43,7 +49,7 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
         tradeOptionsSpinner = findViewById(R.id.optionsSpinner);
         symbolFundSpinner = findViewById(R.id.symbolFundSpinner);
         symbolTargetSpinner = findViewById(R.id.symbolTargetSpinner);
-        clientsList = ctAccount.getClientNamesList(accountsDB, user);
+        clientsList = ctAccount.getClientNamesListAsync(accountsDB, user);
         ArrayAdapter<String> clientsAdapter = new ArrayAdapter<>
                 (this, android.R.layout.simple_spinner_dropdown_item, clientsList);
         ArrayAdapter<String> tradeOptionsAdapter = new ArrayAdapter<>

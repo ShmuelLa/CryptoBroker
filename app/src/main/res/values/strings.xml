@@ -14,4 +14,8 @@
     <string name="cancel_open_order">Cancel Open Order</string>
     <string name="create_new_order">Create New Order</string>
     <string name="x">X</string>
+    <string name="emergency_n_cancel_all_orders">EMERGENCY! \n Cancel ALL Orders!</string>
+    <string name="send_canceletion">Send Canceletion</string>
+    <string name="send_cancelation">send_cancelation</string>
+    <string name="send_cancellation">send_cancellation</string>
 </resources>
