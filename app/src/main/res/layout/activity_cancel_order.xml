@@ -43,6 +43,7 @@
         app:layout_constraintVertical_bias="0.043" />
 
     <Button
+        android:id="@+id/sendCancelOderButton"
         android:layout_width="300dp"
         android:layout_height="100dp"
         android:layout_marginTop="52dp"
@@ -51,5 +52,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/openOrdersSpinner" />
+
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="52dp"
+        android:text="EMERGENCY! Cancel ALL Order!"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sendCancelOderButton" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
