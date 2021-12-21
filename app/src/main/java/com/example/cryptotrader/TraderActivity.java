@@ -62,14 +62,10 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        System.out.println("ZABABIR");
         if (v.getId() == R.id.initiateOrderButton) {
-            System.out.println("ZABABIR222222");
             if (ctUtils.getSpinnerChosenText(clientSpinner) == "All") {
-                System.out.println("ZABABIR");
             }
             else {
-                System.out.println("PETITEE");
             }
 //            switch (getSpinnerChosenText(clientSpinner)) {
 //                case R.id.initiateOrderButton:
