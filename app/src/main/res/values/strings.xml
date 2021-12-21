@@ -18,4 +18,6 @@
     <string name="send_canceletion">Send Canceletion</string>
     <string name="send_cancelation">send_cancelation</string>
     <string name="send_cancellation">send_cancellation</string>
+    <string name="coint_market_value_limit_order_only">Coint Market Value (Limit Order Only)</string>
+    <string name="create_order">Create Order</string>
 </resources>

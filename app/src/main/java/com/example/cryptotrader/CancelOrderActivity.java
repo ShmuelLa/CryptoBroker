@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
+
 import com.binance.api.client.domain.account.Order;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -13,10 +15,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CancelOrderActivity extends AppCompatActivity {
     private DatabaseReference accountsDB;
     private FirebaseUser user;
+
     private Spinner clientSpinner, openOrdersSpinner;
     private List<Order> orderList;
     private ArrayList<String> normalizedOrderList;
@@ -24,6 +29,8 @@ public class CancelOrderActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        ctAccount currentAccount = new ctAccount(executor);
         setContentView(R.layout.activity_cancel_order);
         clientSpinner = findViewById(R.id.clientSpinner);
         openOrdersSpinner = findViewById(R.id.openOrdersSpinner);
@@ -54,6 +61,7 @@ public class CancelOrderActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String chosenUser = ctUtils.getSpinnerChosenText(clientSpinner);
                 orderList = ctAccount.getAllOpenOrdersListAsync(chosenUser, accountsDB, user);
+//                orderList = currentAccount.getAllOpenOrdersList(chosenUser, accountsDB, user);
                 System.out.println(orderList.toString());
                 normalizedOrderList = normalizeOrderListForSpinner(orderList);
             }

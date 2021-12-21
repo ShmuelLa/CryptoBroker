@@ -82,7 +82,7 @@
         android:layout_height="54dp"
         android:layout_marginTop="4.3dp"
         android:background="#50ffffff"
-        android:hint="Coint Market Value"
+        android:hint="@string/coint_market_value_limit_order_only"
         app:layout_constraintTop_toBottomOf="@id/fundsAmountText"
         tools:layout_editor_absoluteX="0dp" />
 
@@ -90,7 +90,7 @@
         android:id="@+id/initiateOrderButton"
         android:layout_width="188dp"
         android:layout_height="73dp"
-        android:text="Create Order"
+        android:text="@string/create_order"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.binance.api.client.BinanceApiAsyncRestClient;
 import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiClientFactory;
+import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.account.Order;
 import com.binance.api.client.domain.account.request.OrderRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -13,6 +14,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.GenericTypeIndicator;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,10 +26,11 @@ public class ctAccount {
     String id;
     String clientName;
     private ArrayList<String> resultSync = new ArrayList<>();
+    private List<Order> resultOrdersSync = new ArrayList<>();
     int totalUSDT;
     int lockedUSDT;
     int freeUSDT;
-    public static List<Order> result = new ArrayList<>();
+    public static List<Order> ordersResult = new ArrayList<>();
 
     public ctAccount(Executor executor) {
         this.executor = executor;
@@ -38,6 +41,23 @@ public class ctAccount {
         credentials = otherCredentials;
         clientName = name;
     }
+
+//    public static ctCredentials getClientCredentialsByName(String requestedClient, DatabaseReference db, FirebaseUser user) {
+//        ctCredentials result = new ctCredentials();
+//        db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DataSnapshot> task) {
+//                if(task.isSuccessful()) {
+//                    GenericTypeIndicator<HashMap<String, ctCredentials>> gType =
+//                            new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
+//                    HashMap<String, ctCredentials> map = task.getResult().getValue(gType);
+//                    map.forEach((clientName, clientTokens) ->
+//                if(clientName.equals(requestedClient) result = clientTokens;));
+//                }
+//            }
+//        });
+//        return result;
+//    }
 
     /**
      * -= Async Task May cause inconsistent performance when used incorrectly =-
@@ -102,7 +122,6 @@ public class ctAccount {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if(task.isSuccessful()) {
-
                     GenericTypeIndicator<HashMap<String, ctCredentials>> gType =
                             new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
                     HashMap<String,  ctCredentials> map = task.getResult().getValue(gType);
@@ -115,7 +134,7 @@ public class ctAccount {
                             client.getOpenOrders(new OrderRequest(null), new BinanceApiCallback<List<Order>>() {
                                 @Override
                                 public void onResponse(List<Order> orders) {
-                                    result = orders;
+                                    ordersResult = orders;
                                 }
                             });
                         }
@@ -123,7 +142,35 @@ public class ctAccount {
                 }
             }
         });
-        return result;
+        return ordersResult;
+    }
+
+    public List<Order> getAllOpenOrdersList(String clientName, DatabaseReference accountsDB, FirebaseUser user) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                accountsDB.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            GenericTypeIndicator<HashMap<String, ctCredentials>> gType =
+                                    new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
+                            HashMap<String,  ctCredentials> map = task.getResult().getValue(gType);
+                            map.forEach((clientName, clientTokens) ->
+                            {
+                                if (clientName.equals(clientName)) {
+                                    BinanceApiClientFactory factory = BinanceApiClientFactory
+                                            .newInstance(clientTokens.getKey(), clientTokens.getSecret());
+                                    BinanceApiRestClient client = factory.newRestClient();
+                                    resultOrdersSync = client.getOpenOrders(new OrderRequest(null));
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
+        return resultOrdersSync;
     }
 
 

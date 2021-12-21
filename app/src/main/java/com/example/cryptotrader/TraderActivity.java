@@ -1,5 +1,7 @@
 package com.example.cryptotrader;
 
+import static com.binance.api.client.domain.account.NewOrder.limitBuy;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +11,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.binance.api.client.BinanceApiAsyncRestClient;
+import com.binance.api.client.BinanceApiClientFactory;
+import com.binance.api.client.domain.TimeInForce;
+import com.binance.api.client.domain.account.NewOrder;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,6 +33,7 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
     private DatabaseReference accountsDB;
     private FirebaseUser user;
     private Button sendOrderButton;
+    private TextView fundText, priceText;
     private final String[] tradeOptions = {"Buy", "Sell", "Limit Buy", "Limit Sell", "Futures Buy", "Futures Sell"};
     private final String[] symbolFundOptions = {"USDT", "BUSD", "BNB"};
     private final String[] symbolTargetOptions = {"BTC", "ETH", "ADA", "MANA", "BNB"};
@@ -37,9 +45,6 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        ctAccount currentAccount = new ctAccount(executor);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trader);
         sendOrderButton = findViewById(R.id.initiateOrderButton);
@@ -62,46 +67,56 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
         tradeOptionsSpinner.setAdapter(tradeOptionsAdapter);
         symbolFundSpinner.setAdapter(symbolFundsAdapter);
         symbolTargetSpinner.setAdapter(symbolTargetAdapter);
-//        spinnerColletion(clientSpinner, tradeOptionsSpinner, symbolFundSpinner, symbolTargetSpinner);
+        fundText = findViewById(R.id.fundsAmountText);
+        priceText = findViewById(R.id.marketPriceText);
+        sendOrderButton.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.initiateOrderButton) {
-            if (ctUtils.getSpinnerChosenText(clientSpinner).equals("All")) {
+            String clientChoice = ctUtils.getSpinnerChosenText(clientSpinner);
+            String tradeOptionChoice = ctUtils.getSpinnerChosenText(tradeOptionsSpinner);
+            String symbolFundChoice = ctUtils.getSpinnerChosenText(symbolFundSpinner);
+            String symbolTargetChoice = ctUtils.getSpinnerChosenText(symbolTargetSpinner);
+            String symbol = symbolTargetChoice + symbolFundChoice;
+            String fundTextString = fundText.getText().toString().trim();
+            String priceTextString = priceText.getText().toString().trim();
+            float funds = Float.parseFloat(fundTextString);
+            float price = Float.parseFloat(priceTextString);
+            if (clientChoice.equals("All")) {
+                if (tradeOptionChoice.equals("Limit Buy") || tradeOptionChoice.equals("Limit Sell")) {
+//                    initiateLimitOrder(symbol);
+                }
+                System.out.println(clientChoice);
+                System.out.println(tradeOptionChoice + " " + symbol + " " + funds + " " + price);
             }
             else {
+                if (tradeOptionChoice.equals("Limit Buy") || tradeOptionChoice.equals("Limit Sell")) {
+//                    initiateLimitOrder(symbol);
+                    accountsDB.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                GenericTypeIndicator<HashMap<String, ctCredentials>> gType =
+                                        new GenericTypeIndicator<HashMap<String, ctCredentials>>() {};
+                                HashMap<String, ctCredentials> map = task.getResult().getValue(gType);
+                                map.forEach((clientName, clientTokens) -> {
+                                    if (clientName.equals(clientChoice)) {
+                                        BinanceApiClientFactory factory = BinanceApiClientFactory
+                                                .newInstance(clientTokens.getKey(), clientTokens.getSecret());
+                                        BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
+                                        client.newOrder(limitBuy(symbol, TimeInForce.GTC, fundTextString, priceTextString)
+                                                ,response -> System.out.println(response));
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+                System.out.println(clientChoice);
+                System.out.println(tradeOptionChoice + " " + symbol);
             }
-//            switch (getSpinnerChosenText(clientSpinner)) {
-//                case R.id.initiateOrderButton:
-//                    try {
-//                        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance("", "");
-//                        BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-//                        client.newOrder(limitSell("ETHUSDT", TimeInForce.GTC, "0.2", "5000"),
-//                                response -> System.out.println(response));
-//                    } catch (Exception e) {
-//                        System.out.println(e);
-//                    }
-//                    break;
-//            }
         }
     }
-
-//    public void spinnerColletion(Spinner first, Spinner second, Spinner third, Spinner fourth) {
-//        first.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                TextView textView = (TextView)first.getSelectedView();
-//                switch(textView.getText().toString()) {
-//
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
-//    }
 }
