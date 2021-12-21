@@ -49,33 +49,6 @@ public class CancelOrderActivity extends AppCompatActivity {
                 String chosenUser = ctUtils.getSpinnerChosenText(clientSpinner);
                 orderList = ctAccount.getAllOpenOrdersList(chosenUser, accountsDB, user);
                 System.out.println(orderList.toString());
-//                accountsDB.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                        if(task.isSuccessful()) {
-//                            GenericTypeIndicator<HashMap<String, ctCredentials>> gType =
-//                                    new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
-//                            HashMap<String,  ctCredentials> map = task.getResult().getValue(gType);
-//                            map.forEach((clientName, clientTokens) ->
-//                            {
-//                                if (clientName.equals(chosenUser)) {
-//                                    BinanceApiClientFactory factory = BinanceApiClientFactory
-//                                            .newInstance(clientTokens.getKey(), clientTokens.getSecret());
-//                                    BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-//                                    client.getOpenOrders(new OrderRequest(null), new BinanceApiCallback<List<Order>>() {
-//                                        @Override
-//                                        public void onResponse(List<Order> orders) {
-//                                            System.out.println(orders.toString());
-//                                        }
-//                                    });
-////                                    List<Order> openOrders = client.getOpenOrders(new OrderRequest(null));
-//                                }
-//                                else {
-//                                }
-//                            });
-//                        }
-//                    }
-//                });
             }
 
             @Override
