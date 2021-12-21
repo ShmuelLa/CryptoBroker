@@ -81,15 +81,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if (user.isEmailVerified())
+                    if (user.isEmailVerified()) {
                         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                        progressBar.setVisibility(View.GONE);
+                    }
                     else {
                         user.sendEmailVerification();
                         Toast.makeText(LoginActivity.this, "Verification mail sent again. Please check your e-mail",Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.GONE);
                     }
                 }
                 else {
                     Toast.makeText(LoginActivity.this, "Failed to Login! Please try again", Toast.LENGTH_LONG).show();
+                    progressBar.setVisibility(View.GONE);
                 }
             }
         });

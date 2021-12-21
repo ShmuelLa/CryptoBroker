@@ -4,14 +4,19 @@ import static com.binance.api.client.domain.account.NewOrder.limitBuy;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.binance.api.client.domain.account.Trade;
 import com.binance.api.client.BinanceApiAsyncRestClient;
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.domain.TimeInForce;
@@ -41,6 +46,8 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
     private Spinner tradeOptionsSpinner;
     private Spinner symbolFundSpinner;
     private Spinner symbolTargetSpinner;
+    private ProgressBar progressBar;
+    private ImageButton profileButton;
     ArrayList<String> clientsList = new ArrayList<>();
 
     @Override
@@ -74,6 +81,7 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
+
         if (v.getId() == R.id.initiateOrderButton) {
             String clientChoice = ctUtils.getSpinnerChosenText(clientSpinner);
             String tradeOptionChoice = ctUtils.getSpinnerChosenText(tradeOptionsSpinner);

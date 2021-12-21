@@ -88,9 +88,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                         Toast.makeText(RegisterActivity.this, "User Registered Successfully! Please verify your e-mail address", Toast.LENGTH_LONG).show();
                                         FirebaseUser u = mAuth.getCurrentUser();
                                         u.sendEmailVerification();
-                                        progressBar.setVisibility(View.VISIBLE);
-
                                         startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                                        progressBar.setVisibility(View.GONE);
                                     }
                                     else{
                                         Toast.makeText(RegisterActivity.this, "Registration Failed!", Toast.LENGTH_LONG).show();
