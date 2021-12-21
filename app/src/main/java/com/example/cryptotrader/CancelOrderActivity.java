@@ -28,9 +28,10 @@ import java.util.List;
 public class CancelOrderActivity extends AppCompatActivity {
     private DatabaseReference accountsDB;
     private FirebaseUser user;
-    private Spinner clientSpinner;
+    private Spinner clientSpinner, openOrdersSpinner;
     private ArrayList<String> clientsList = new ArrayList<>();
     private List<Order> orderList;
+    private ArrayList<String> normalizedOrderList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +50,34 @@ public class CancelOrderActivity extends AppCompatActivity {
                 String chosenUser = ctUtils.getSpinnerChosenText(clientSpinner);
                 orderList = ctAccount.getAllOpenOrdersList(chosenUser, accountsDB, user);
                 System.out.println(orderList.toString());
+                normalizedOrderList = normalizeOrderListForSpinner(orderList);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+        if (normalizedOrderList != null) {
+            showOpenOrders();
+        }
+
+    }
+
+    public ArrayList<String> normalizeOrderListForSpinner(List<Order> beforeList) {
+        ArrayList<String> result = new ArrayList<>();
+        for (Order order : beforeList) {
+            String tmpOrder = order.getSymbol() + " " + order.getType() + " "  + order.getPrice();
+            result.add(tmpOrder);
+        }
+        if (result.size() < 1 || result.size() == 0) {
+            result.add("None");
+        }
+        return result;
+    }
+
+    void showOpenOrders() {
+        ArrayAdapter<String> ordersAdapter = new ArrayAdapter<>(this, android.R.layout
+                .simple_spinner_dropdown_item, normalizedOrderList);
+        openOrdersSpinner.setAdapter(ordersAdapter);
     }
 }

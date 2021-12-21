@@ -42,4 +42,14 @@
         app:layout_constraintTop_toBottomOf="@+id/clientSpinner"
         app:layout_constraintVertical_bias="0.043" />
 
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="52dp"
+        android:text="Send Canceletion"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/openOrdersSpinner" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
