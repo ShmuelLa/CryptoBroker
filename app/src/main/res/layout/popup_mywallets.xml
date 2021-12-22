@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="350dp"
+    android:layout_height="475dp"
+    android:background="#2F383F"
+    android:padding="5dp"
+    android:layout_gravity="center">
+    <TextView
+        android:id="@+id/txtclose"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:textColor="@color/white"
+        android:text="X"
+        android:textStyle="bold"
+        android:layout_gravity="end"
+        android:gravity="center" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginBottom="350dp"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            android:inputType="none"
+            android:text="Select Account" />
+    </com.google.android.material.textfield.TextInputLayout>
+</LinearLayout>

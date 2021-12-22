@@ -2,18 +2,26 @@ package com.example.cryptotrader;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.collection.CircularArray;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.binance.api.client.BinanceApiAsyncRestClient;
@@ -28,6 +36,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
@@ -56,16 +66,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         user = FirebaseAuth.getInstance().getCurrentUser();
         accounts_db = FirebaseDatabase.getInstance().getReference("Accounts");
         progressBar = findViewById(R.id.progressBar);
-//        account_name = findViewById(R.id.account_name);
-//        key_input = findViewById(R.id.key_input);
-//        secret_input = findViewById(R.id.secret_input);
     }
 
     @Override
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.wallet:
-                showpop_wallet(view);
+                showWallet(view);
                 break;
             case R.id.chart:
                 showPopupTradeChooser(view);
@@ -81,30 +88,94 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void showpop_wallet(View view) {
+    private void showWallet(View view) {
+        myDialog.setContentView(R.layout.popup_mywallets);
+        ArrayList<String> temoList = new ArrayList<>();
+        ArrayList<ctCredentials> ctCredentialsArrayList = new ArrayList<>();
+        System.out.println("entering@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         accounts_db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
+                System.out.println("cheching@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
                 if(task.isSuccessful()){
+                    System.out.println("got@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
                     GenericTypeIndicator<HashMap<String, ctCredentials>> gType = new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
-                    HashMap<String,  ctCredentials> map = task.getResult().getValue(gType);
-                    map.forEach((clientName, clientTokens)
-                            ->
-                            {
-                                BinanceApiClientFactory factory = BinanceApiClientFactory
-                                        .newInstance(clientTokens.getKey(), clientTokens.getSecret());
-                                BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-                                client.getAccount(new BinanceApiCallback<Account>() {
-                                    @Override
-                                    public void onResponse(Account account) {
-                                        System.out.println(clientName + "  " + account.getBalances());
-                                    }
-                                });
-                            }
-                    );
+                    HashMap<String, ctCredentials> map = task.getResult().getValue(gType);
+                    map.forEach((clientName, clientTokens) -> {temoList.add(clientName); ctCredentialsArrayList.add(clientTokens);});
                 }
             }
         });
+        String[] arr = new String[temoList.size()];
+        arr = temoList.toArray(arr);
+        AutoCompleteTextView textView = (AutoCompleteTextView) myDialog.findViewById(R.id.autoCompleteTextView);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, arr);
+        textView.setAdapter(adapter);
+        textView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                System.out.println(s.toString());
+            }
+        });
+
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,temp);
+//        spinner.setAdapter(adapter);
+//
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+//        builder.setView(spinner);
+//        builder.create();
+//        builder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                System.out.println("sadahdslkhkasdsa");
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
+        TextView close_pop = myDialog.findViewById(R.id.txtclose);
+        close_pop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myDialog.dismiss();
+            }
+        });
+        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        myDialog.show();
+
+//        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                String selected = (String) parent.getItemAtPosition(position);
+//                ctCredentials credentials = ctCredentialsArrayList.get(temp.indexOf(selected));
+//                BinanceApiClientFactory factory = BinanceApiClientFactory
+//                        .newInstance(credentials.getKey(), credentials.getSecret());
+//                BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
+//                System.out.println("12333131231312312312312");
+//                client.getAccount(new BinanceApiCallback<Account>() {
+//                    @Override
+//                    public void onResponse(Account account) {
+//                        System.out.println(" !@#!@#!@#!@#!@#!@#!@#!@#!@#!@#!@#!@#!@#!@#!@3 " + account.getBalances());
+//                    }
+//                });
+//            }
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//            }
+//        });
+
     }
 
     private void showPopupAdd(View view){

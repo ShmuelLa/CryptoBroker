@@ -21,6 +21,7 @@
         <entry key="..\:/Users/Gidon/Desktop/CryptoBroker/app/src/main/res/drawable/ic_baseline_vpn_key_24.xml" value="0.14635416666666667" />
         <entry key="..\:/Users/Gidon/Desktop/CryptoBroker/app/src/main/res/drawable/ic_launcher_background.xml" value="0.14635416666666667" />
         <entry key="..\:/Users/Gidon/Desktop/CryptoBroker/app/src/main/res/drawable/ic_outline_vpn_key_24.xml" value="0.14635416666666667" />
+        <entry key="..\:/Users/Gidon/Desktop/CryptoBroker/app/src/main/res/drawable/myspinner.xml" value="0.14322916666666666" />
         <entry key="..\:/Users/Gidon/Desktop/CryptoBroker/app/src/main/res/layout/activity_Home.xml" value="0.25" />
         <entry key="..\:/Users/Gidon/Desktop/CryptoBroker/app/src/main/res/layout/activity_forgot_password.xml" value="0.4" />
         <entry key="..\:/Users/Gidon/Desktop/CryptoBroker/app/src/main/res/layout/activity_home.xml" value="0.264" />
@@ -28,6 +29,8 @@
         <entry key="..\:/Users/Gidon/Desktop/CryptoBroker/app/src/main/res/layout/activity_main.xml" value="0.13020833333333334" />
         <entry key="..\:/Users/Gidon/Desktop/CryptoBroker/app/src/main/res/layout/activity_profile.xml" value="0.264" />
         <entry key="..\:/Users/Gidon/Desktop/CryptoBroker/app/src/main/res/layout/popup.xml" value="0.264" />
+        <entry key="..\:/Users/Gidon/Desktop/CryptoBroker/app/src/main/res/layout/popup_mywallets.xml" value="0.25" />
+        <entry key="..\:/Users/Gidon/Desktop/CryptoBroker/app/src/main/res/layout/popup_wallets.xml" value="0.25" />
         <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.24791666666666667" />
         <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/drawable/ic_baseline_person_outline_24.xml" value="0.24791666666666667" />
         <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/drawable/ic_baseline_vpn_key_24.xml" value="0.24791666666666667" />
