@@ -47,6 +47,11 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
     private Spinner tradeOptionsSpinner;
     private Spinner symbolFundSpinner;
     private Spinner symbolTargetSpinner;
+    private String chosenSymbol;
+    private String chosenOrderType;
+    private String chosenClient;
+    private String chosenCoinAmount;
+    private String chosenCoinMarketValue;
     private ProgressBar progressBar;
     private ImageButton profileButton;
     ArrayList<String> clientsList = new ArrayList<>();
@@ -83,46 +88,56 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.initiateOrderButton) {
-            String clientChoice = ctUtils.getSpinnerChosenText(clientSpinner);
-            String tradeOptionChoice = ctUtils.getSpinnerChosenText(tradeOptionsSpinner);
-            String symbolFundChoice = ctUtils.getSpinnerChosenText(symbolFundSpinner);
-            String symbolTargetChoice = ctUtils.getSpinnerChosenText(symbolTargetSpinner);
-            String symbol = symbolTargetChoice + symbolFundChoice;
+            chosenClient = ctUtils.getSpinnerChosenText(clientSpinner);
+            chosenOrderType = ctUtils.getSpinnerChosenText(tradeOptionsSpinner);
+            chosenCoinAmount = ctUtils.getSpinnerChosenText(symbolFundSpinner);
+            chosenCoinMarketValue = ctUtils.getSpinnerChosenText(symbolTargetSpinner);
+            chosenSymbol = chosenCoinMarketValue + chosenCoinAmount;
             String fundsAmountTextString = fundText.getText().toString().trim();
             String marketPriceTextString = priceText.getText().toString().trim();
-            if (clientChoice.equals("All")) {
-                if (tradeOptionChoice.equals("Limit Buy") || tradeOptionChoice.equals("Limit Sell")) {
-//                    initiateLimitOrder(symbol);
+            if (chosenClient.equals("All")) {
+                if (chosenOrderType.equals("Limit Buy") || chosenOrderType.equals("Limit Sell")) {
+                    initiateLimitOrder();
                 }
-                System.out.println(clientChoice);
-                System.out.println(tradeOptionChoice + " " + symbol + " " + fundsAmountTextString + " " + marketPriceTextString);
+                System.out.println(chosenClient);
+                System.out.println(chosenOrderType + " " + chosenSymbol + " " + fundsAmountTextString + " " + marketPriceTextString);
             }
             else {
-                if (tradeOptionChoice.equals("Limit Buy") || tradeOptionChoice.equals("Limit Sell")) {
-//                    initiateLimitOrder(symbol);
-                    accountsDB.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DataSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                GenericTypeIndicator<HashMap<String, ctCredentials>> gType =
-                                        new GenericTypeIndicator<HashMap<String, ctCredentials>>() {};
-                                HashMap<String, ctCredentials> map = task.getResult().getValue(gType);
-                                map.forEach((clientName, clientTokens) -> {
-                                    if (clientName.equals(clientChoice)) {
-                                        BinanceApiClientFactory factory = BinanceApiClientFactory
-                                                .newInstance(clientTokens.getKey(), clientTokens.getSecret());
-                                        BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-                                        client.newOrder(limitSell(symbol, TimeInForce.GTC, fundsAmountTextString, marketPriceTextString)
-                                                ,response -> System.out.println(response));
-                                    }
-                                });
+                if (chosenOrderType.equals("Limit Buy") || chosenOrderType.equals("Limit Sell")) {
+                    initiateLimitOrder();
+
+                }
+                System.out.println(chosenClient);
+                System.out.println(chosenOrderType + " " + chosenSymbol);
+            }
+        }
+    }
+
+    void initiateLimitOrder() {
+        accountsDB.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()) {
+                    GenericTypeIndicator<HashMap<String, ctCredentials>> gType =
+                            new GenericTypeIndicator<HashMap<String, ctCredentials>>() {};
+                    HashMap<String, ctCredentials> map = task.getResult().getValue(gType);
+                    map.forEach((clientName, clientTokens) -> {
+                        if (clientName.equals(chosenClient)) {
+                            BinanceApiClientFactory factory = BinanceApiClientFactory
+                                    .newInstance(clientTokens.getKey(), clientTokens.getSecret());
+                            BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
+                            if (chosenOrderType.equals("Limit Buy")) {
+                                client.newOrder(limitBuy(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinMarketValue)
+                                        ,response -> System.out.println(response));
+                            }
+                            else if (chosenOrderType.equals("Limit Sell")) {
+                                client.newOrder(limitSell(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinMarketValue)
+                                        ,response -> System.out.println(response));
                             }
                         }
                     });
                 }
-                System.out.println(clientChoice);
-                System.out.println(tradeOptionChoice + " " + symbol);
             }
-        }
+        });
     }
 }
