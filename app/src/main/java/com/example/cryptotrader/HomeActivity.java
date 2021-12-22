@@ -151,38 +151,38 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                             switch (coin){
                                 case "BTC":
                                     if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
-                                        bit_value.setText("Bitcoin:   " +
+                                        bit_value.setText("Bitcoin:  " +
                                                 new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
                                                         .setScale(10,BigDecimal.ROUND_HALF_EVEN).toPlainString());
                                     }else{
-                                        bit_value.setText("Bitcoin:   " + "0.0000");
+                                        bit_value.setText("Bitcoin:  " + "0.0000");
                                     }
                                     break;
                                 case "ETH":
                                     if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
-                                        eth_value.setText("Ethereum:   " +
+                                        eth_value.setText("Ethereum:  " +
                                                 new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
                                                         .setScale(10,BigDecimal.ROUND_HALF_EVEN).toPlainString());
                                     }else{
-                                        eth_value.setText("Ethereum:   " + "0.0000");
+                                        eth_value.setText("Ethereum:  " + "0.0000");
                                     }
                                     break;
                                 case "ADA":
                                     if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
-                                        ada_value.setText("Cardano:   " +
+                                        ada_value.setText("Cardano:  " +
                                                 new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
                                                         .setScale(10,BigDecimal.ROUND_HALF_EVEN).toPlainString());
                                     }else{
-                                        ada_value.setText("Cardano:   " + "0.0000");
+                                        ada_value.setText("Cardano:  " + "0.0000");
                                     }
                                     break;
                                 case "USDT":
                                     if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
-                                        usdt_value.setText("Usdt:   " +
+                                        usdt_value.setText("Usdt:  " +
                                                 new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
                                                         .setScale(10,BigDecimal.ROUND_HALF_EVEN).toPlainString());
                                     }else{
-                                        usdt_value.setText("Tether/Usdt:   " + "0.0000");
+                                        usdt_value.setText("Tether/Usdt:  " + "0.0000");
                                     }
                                     break;
                             }
