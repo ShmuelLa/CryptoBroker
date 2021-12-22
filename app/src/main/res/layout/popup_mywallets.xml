@@ -34,7 +34,7 @@
             android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
     <Button
-        android:id="@+id/bitcoin_value"
+        android:id="@+id/bit_value"
         android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
         android:text="Bitcoin:0.0"
         android:textSize="15dp"
         android:textColor="@color/white"
-        android:background="#8a9ba8"
+        android:background="#0000ffff"
         android:enabled="false"/>
     <Button
         android:id="@+id/ada_value"
@@ -54,7 +54,7 @@
         android:text="Cardano:0.0"
         android:textSize="15dp"
         android:textColor="@color/white"
-        android:background="#8a9ba8"
+        android:background="#0000ffff"
         android:textAllCaps="false"
         android:enabled="false"/>
     <Button
@@ -70,12 +70,12 @@
         android:background="#0000ffff"
         android:enabled="false"/>
     <Button
-        android:id="@+id/tether_value"
+        android:id="@+id/usdt_value"
         android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/tether"
-        android:text="Tether/Usdt:0.0"
+        android:text="Usdt:0.0"
         android:textAllCaps="false"
         android:textSize="15dp"
         android:textColor="@color/white"

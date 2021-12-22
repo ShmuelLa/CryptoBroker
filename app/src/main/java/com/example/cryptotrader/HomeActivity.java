@@ -1,9 +1,12 @@
 package com.example.cryptotrader;
 
+import static com.binance.api.client.domain.account.NewOrder.limitSell;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.collection.CircularArray;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
@@ -27,7 +30,10 @@ import android.widget.Toast;
 import com.binance.api.client.BinanceApiAsyncRestClient;
 import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiClientFactory;
+import com.binance.api.client.domain.TimeInForce;
 import com.binance.api.client.domain.account.Account;
+import com.binance.api.client.domain.account.AssetBalance;
+import com.binance.api.client.domain.general.Asset;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,18 +43,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
 
     private ImageButton wallet, chart, add, profile;
-    private Button addButton, mainTraderButton, cancelTradeButton;
+    private Button addButton, mainTraderButton, cancelTradeButton,bit_value,eth_value,ada_value,usdt_value;
     private Dialog myDialog;
     private EditText accountName, keyInput, secretInput;
     private DatabaseReference accounts_db;
     private FirebaseUser user;
     private ProgressBar progressBar;
+    private  HashMap<String,String > balance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +75,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         user = FirebaseAuth.getInstance().getCurrentUser();
         accounts_db = FirebaseDatabase.getInstance().getReference("Accounts");
         progressBar = findViewById(R.id.progressBar);
+        balance = new HashMap<>();
+        balance.put("BTC","0.0000");
+        balance.put("USDT","0.0000");
+        balance.put("ETH","0.0000");
+        balance.put("ADA","0.0000");
     }
 
     @Override
@@ -92,6 +106,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         myDialog.setContentView(R.layout.popup_mywallets);
         ArrayList<String> nList = new ArrayList<>();
         ArrayList<ctCredentials> ctCredentialsArrayList = new ArrayList<>();
+        bit_value = myDialog.findViewById(R.id.bit_value);
+        eth_value = myDialog.findViewById(R.id.eth_value);
+        ada_value = myDialog.findViewById(R.id.ada_value);
+        usdt_value = myDialog.findViewById(R.id.usdt_value);
         accounts_db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -106,20 +124,81 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         AutoCompleteTextView textView = (AutoCompleteTextView) myDialog.findViewById(R.id.autoCompleteTextView);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, nList);
         textView.setAdapter(adapter);
+        ArrayList<String> cname = new ArrayList<>();
         textView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                System.out.println(s.toString()+"ONONONONONONONONONONONONONONONONONONONONONONONONON");
+                cname.add(s.toString());
             }
-
             @Override
             public void afterTextChanged(Editable s) {
-                System.out.println(s.toString()+"AFTERAFTERAFTERAFTERAFTERAFTERAFTERAFTERAFTERAFTERAFTER");
+                ctCredentials credentials = ctCredentialsArrayList.get(nList.indexOf(cname.get(0)));
+                BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(credentials.getKey(), credentials.getSecret());
+                BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
+                HashMap<String,AssetBalance > allAssets = new HashMap<>();
+                client.getAccount(new BinanceApiCallback<Account>() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onResponse(Account account) {
+                        for(AssetBalance ass : account.getBalances()){
+                            allAssets.put(ass.getAsset(),ass);
+                        }
+                        for (String coin : allAssets.keySet()){
+                            switch (coin){
+                                case "BTC":
+                                    if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
+                                        bit_value.setText("Bitcoin:   " +
+                                                new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
+                                                        .setScale(10,BigDecimal.ROUND_HALF_EVEN).toPlainString());
+                                    }else{
+                                        bit_value.setText("Bitcoin:   " + "0.0000");
+                                    }
+                                    break;
+                                case "ETH":
+                                    if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
+                                        eth_value.setText("Ethereum:   " +
+                                                new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
+                                                        .setScale(10,BigDecimal.ROUND_HALF_EVEN).toPlainString());
+                                    }else{
+                                        eth_value.setText("Ethereum:   " + "0.0000");
+                                    }
+                                    break;
+                                case "ADA":
+                                    if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
+                                        ada_value.setText("Cardano:   " +
+                                                new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
+                                                        .setScale(10,BigDecimal.ROUND_HALF_EVEN).toPlainString());
+                                    }else{
+                                        ada_value.setText("Cardano:   " + "0.0000");
+                                    }
+                                    break;
+                                case "USDT":
+                                    if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
+                                        usdt_value.setText("Usdt:   " +
+                                                new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
+                                                        .setScale(10,BigDecimal.ROUND_HALF_EVEN).toPlainString());
+                                    }else{
+                                        usdt_value.setText("Tether/Usdt:   " + "0.0000");
+                                    }
+                                    break;
+                            }
+                        }
+
+                    }
+                });
+
+                client.getAllAssets(new BinanceApiCallback<List<Asset>>() {
+                    @Override
+                    public void onResponse(List<Asset> assets) {
+                        for(Asset ass : assets){
+                            System.out.println(ass.getAssetName() + " " + ass.getFreeUserChargeAmount());
+                        }
+                    }
+                });
             }
         });
 
