@@ -98,30 +98,30 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 if(task.isSuccessful()){
                     GenericTypeIndicator<HashMap<String, ctCredentials>> gType = new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
                     HashMap<String, ctCredentials> map = task.getResult().getValue(gType);
-                    map.forEach((clientName, clientTokens) -> {nList.add(clientName); ctCredentialsArrayList.add(clientTokens);
-                        System.out.println(clientName+"!@#!@#!@#!@#!@#!@#!@#!@31");});
+                    map.forEach((clientName, clientTokens) -> {nList.add(clientName); ctCredentialsArrayList.add(clientTokens); });
                 }
             }
         });
-//        AutoCompleteTextView textView = (AutoCompleteTextView) myDialog.findViewById(R.id.autoCompleteTextView);
-//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, arr);
-//        textView.setAdapter(adapter);
-//        textView.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                System.out.println(s.toString());
-//            }
-//        });
+
+        AutoCompleteTextView textView = (AutoCompleteTextView) myDialog.findViewById(R.id.autoCompleteTextView);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, nList);
+        textView.setAdapter(adapter);
+        textView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                System.out.println(s.toString()+"ONONONONONONONONONONONONONONONONONONONONONONONONON");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                System.out.println(s.toString()+"AFTERAFTERAFTERAFTERAFTERAFTERAFTERAFTERAFTERAFTERAFTER");
+            }
+        });
 
 //        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,temp);
 //        spinner.setAdapter(adapter);
