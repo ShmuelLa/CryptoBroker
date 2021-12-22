@@ -123,24 +123,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,temp);
-//        spinner.setAdapter(adapter);
-//
-//
-//        AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
-//        builder.setView(spinner);
-//        builder.create();
-//        builder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                System.out.println("sadahdslkhkasdsa");
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
         TextView close_pop = myDialog.findViewById(R.id.txtclose);
         close_pop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,27 +132,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         });
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
-
-//        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                String selected = (String) parent.getItemAtPosition(position);
-//                ctCredentials credentials = ctCredentialsArrayList.get(temp.indexOf(selected));
-//                BinanceApiClientFactory factory = BinanceApiClientFactory
-//                        .newInstance(credentials.getKey(), credentials.getSecret());
-//                BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-//                System.out.println("12333131231312312312312");
-//                client.getAccount(new BinanceApiCallback<Account>() {
-//                    @Override
-//                    public void onResponse(Account account) {
-//                        System.out.println(" !@#!@#!@#!@#!@#!@#!@#!@#!@#!@#!@#!@#!@#!@#!@3 " + account.getBalances());
-//                    }
-//                });
-//            }
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//            }
-//        });
 
     }
 
