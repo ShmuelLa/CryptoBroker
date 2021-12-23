@@ -107,6 +107,28 @@
         app:layout_constraintRight_toRightOf="parent"
         />
 
+
+    <TextView
+        android:id="@+id/preveiw"
+        android:layout_width="373dp"
+        android:layout_height="330dp"
+        android:scrollbarSize="3dp"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbarThumbVertical="@color/white"
+        android:scrollbars="vertical"
+        android:text="loading . . ."
+        android:textAlignment="center"
+        android:background="#50ffffff"
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.578"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bannerDescription"
+        app:layout_constraintVertical_bias="0.506"
+        tools:ignore="MissingConstraints" />
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"

@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -24,6 +25,7 @@ import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.AssetBalance;
+import com.binance.api.client.domain.market.TickerPrice;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,7 +36,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.TreeMap;
 
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
@@ -45,13 +51,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private EditText accountName, keyInput, secretInput;
     private DatabaseReference accounts_db;
     private FirebaseUser user;
+    private TextView preview;
     private ProgressBar progressBar;
-    private HashMap<String, BigDecimal> balance;
-
+    List<String> currencies;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        balance = new HashMap<>();
         myDialog = new Dialog(this);
         setContentView(R.layout.activity_home);
         add = findViewById(R.id.add);
@@ -65,6 +70,83 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         user = FirebaseAuth.getInstance().getCurrentUser();
         accounts_db = FirebaseDatabase.getInstance().getReference("Accounts");
         progressBar = findViewById(R.id.progressBar);
+        preview = findViewById(R.id.preveiw);
+        preview.setMovementMethod(new ScrollingMovementMethod());
+        TreeMap<String,String> prices = new TreeMap<>();
+        TreeMap<String,String> cAmounts = new TreeMap<>();
+        ArrayList<String> text_preveiw = new ArrayList<>();
+        text_preveiw.add("Accounts balances:\n");
+        currencies= Arrays.asList("BTC","ETH","ADA","BNB","MANA","USDT");
+        accounts_db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()){
+                    GenericTypeIndicator<HashMap<String, ctCredentials>> gType = new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
+                    HashMap<String, ctCredentials> map = task.getResult().getValue(gType);
+//                    for(String clientName : map.keySet()){
+                    map.forEach((clientName, credentials) ->{
+                        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(credentials.getKey(), credentials.getSecret());
+                        BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
+                        client.getAccount(new BinanceApiCallback<Account>() {
+                            @Override
+                            public void onResponse(Account account) {
+                                for(AssetBalance ass : account.getBalances()){
+                                    String coin = ass.getAsset();
+                                    if(currencies.contains(coin)){
+                                        cAmounts.put(coin,ass.getFree());
+                                    }
+                                }
+                                client.getAllPrices(new BinanceApiCallback<List<TickerPrice>>() {
+                                    @Override
+                                    public void onResponse(List<TickerPrice> tickerPrices) {
+                                        double sum = 0;
+                                        text_preveiw.add(clientName);
+                                        text_preveiw.add("Total Free in USDT: ");
+                                        sum+= Double.parseDouble(cAmounts.get("USDT"));
+                                        for(TickerPrice tp : tickerPrices){
+                                            String symbol = tp.getSymbol();
+                                            if(symbol.contains("USDT")){
+                                                String cName = symbol.replaceAll("USDT","");
+                                                if(currencies.contains(cName)) {
+                                                    double price = Double.parseDouble(tp.getPrice());
+                                                    double amount = Double.parseDouble(cAmounts.get(cName));
+                                                    sum += (price * amount);
+                                                }
+                                            }
+                                        }
+                                        text_preveiw.add(Double.toString(sum));
+                                        text_preveiw.add("\n");
+                                        StringBuilder ptxt = new StringBuilder();
+                                        text_preveiw.forEach((t) ->{ptxt.append(t).append("\n");});
+                                        preview.setText(ptxt);
+                                    }
+                                    @Override
+                                    public void onFailure(Throwable cause) {
+                                        try {
+                                            throw cause;
+                                        } catch (Throwable throwable) {
+                                            throwable.printStackTrace();
+                                        }
+                                    }
+                                });
+                            }
+                            @Override
+                            public void onFailure(Throwable cause) {
+                                try {
+                                    throw cause;
+                                } catch (Throwable throwable) {
+                                    throwable.printStackTrace();
+                                }
+                            }
+                        });
+                    });
+                }else{
+                    preview.setText("Please add wallets to your account.\n You can do so at the Add button in the middle of the taskbar.");
+                }
+            }
+
+        });
     }
 
     @Override
@@ -88,9 +170,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void showWallet(View view) {
-        myDialog.setContentView(R.layout.popup_mywallets);
         ArrayList<String> nList = new ArrayList<>();
         ArrayList<ctCredentials> ctCredentialsArrayList = new ArrayList<>();
+        myDialog.setContentView(R.layout.popup_mywallets);
         bit_value = myDialog.findViewById(R.id.bit_value);
         eth_value = myDialog.findViewById(R.id.eth_value);
         ada_value = myDialog.findViewById(R.id.ada_value);
@@ -106,106 +188,82 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         });
-
-        AutoCompleteTextView textView = (AutoCompleteTextView) myDialog.findViewById(R.id.autoCompleteTextView);
+        AutoCompleteTextView textView =  myDialog.findViewById(R.id.autoCompleteTextView);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, nList);
         textView.setAdapter(adapter);
         ArrayList<String> cname = new ArrayList<>();
         textView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                cname.add(s.toString());
-            }
-            @Override
-            public void afterTextChanged(Editable s) {
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    cname.add(s.toString());
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
                 ctCredentials credentials = ctCredentialsArrayList.get(nList.indexOf(s.toString()));
                 BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(credentials.getKey(), credentials.getSecret());
                 BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-                HashMap<String,AssetBalance > allAssets = new HashMap<>();
-                client.getAccount(new BinanceApiCallback<Account>() {
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onResponse(Account account) {
-                        for(AssetBalance ass : account.getBalances()){
-                            allAssets.put(ass.getAsset(),ass);
-                        }
-                        for (String coin : allAssets.keySet()){
-                            BigDecimal biggy = new BigDecimal(0);
-                            switch (coin){
-                                case "BTC":
-                                    if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
-                                        biggy = new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
-                                                .setScale(3,BigDecimal.ROUND_HALF_EVEN);
-                                        bit_value.setText("BTC:  " +biggy.toPlainString());
-                                        balance.put("BTC", biggy);
-                                    }else{
+                    client.getAccount(new BinanceApiCallback<Account>() {
+                        @SuppressLint("SetTextI18n")
+                        @Override
+                        public void onResponse(Account account) {
+                            for(AssetBalance ass : account.getBalances()){
+                                String coin = ass.getAsset();
+                                BigDecimal biggy = new BigDecimal(0);
+                                switch (coin) {
+                                    case "BTC":
+                                        if (Double.parseDouble(ass.getFree()) > 0) {
+                                            biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
+                                                    .setScale(9, BigDecimal.ROUND_HALF_EVEN);
+                                        }
                                         bit_value.setText("BTC:  " + biggy.toPlainString());
-                                        balance.put("BTC", new BigDecimal(0));
-                                    }
-                                    break;
-                                case "ETH":
-                                    if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
-                                        biggy = new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
-                                                .setScale(3,BigDecimal.ROUND_HALF_EVEN);
-                                        eth_value.setText("ETH:  " +biggy.toPlainString());
-                                        balance.put("ETH", biggy);
-                                    }else{
-                                        eth_value.setText("ETH:  " + "0.0000");
-                                        balance.put("ETH", new BigDecimal(0));
-                                    }
-                                    break;
-                                case "ADA":
-                                    if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
-                                        biggy = new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
-                                                .setScale(3,BigDecimal.ROUND_HALF_EVEN);
-                                        ada_value.setText("ADA:  " +biggy.toPlainString());
-                                        balance.put("ADA", biggy);
-                                    }else{
-                                        ada_value.setText("ADA:  " + "0.0000");
-                                        balance.put("ADA",new BigDecimal(0));
-                                    }
-                                    break;
-                                case "USDT":
-                                    if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
-                                        biggy = new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
-                                                .setScale(3,BigDecimal.ROUND_HALF_EVEN);
-                                        balance.put("USDT", biggy);
-                                    }else{
-                                        balance.put("USDT",new BigDecimal(0));
-                                    }
-                                    break;
-                                case "BNB":
-                                    if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
-                                        biggy = new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
-                                                .setScale(3,BigDecimal.ROUND_HALF_EVEN);
-                                        bnb_value.setText("BNB:  " +biggy.toPlainString());
-                                        balance.put("BNB", biggy);
-                                    }else{
-                                        balance.put("BNB",new BigDecimal(0));
-                                    }
-                                    break;
-                                case "MANA":
-                                    if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
-                                        biggy = new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
-                                                .setScale(3,BigDecimal.ROUND_HALF_EVEN);
-                                        mana_value.setText("MANA:  " +biggy.toPlainString());
-                                        balance.put("MANA", biggy);
-                                    }else{
-                                        balance.put("MANA",new BigDecimal(0));
-                                    }
-                                    break;
+                                        break;
+                                    case "ETH":
+                                        if (Double.parseDouble(ass.getFree()) > 0) {
+                                            biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
+                                                    .setScale(6, BigDecimal.ROUND_HALF_EVEN);
+                                        }
+                                        eth_value.setText("ETH:  " + biggy.toPlainString());
+                                        break;
+                                    case "ADA":
+                                        if (Double.parseDouble(ass.getFree()) > 0) {
+                                            biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
+                                                    .setScale(3, BigDecimal.ROUND_HALF_EVEN);
+                                        }
+                                        ada_value.setText("ADA:  " + biggy.toPlainString());
+                                        break;
+                                    case "BNB":
+                                        if (Double.parseDouble(ass.getFree()) > 0) {
+                                            biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
+                                                    .setScale(6, BigDecimal.ROUND_HALF_EVEN);
+                                        }
+                                        bnb_value.setText("BNB:  " + biggy.toPlainString());
+                                        break;
+                                    case "MANA":
+                                        if (Double.parseDouble(ass.getFree()) > 0) {
+                                            biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
+                                                    .setScale(3, BigDecimal.ROUND_HALF_EVEN);
+                                        }
+                                        mana_value.setText("MANA:  " + biggy.toPlainString());
+                                        break;
+                                }
                             }
                         }
-
+                    @Override
+                    public void onFailure(Throwable cause) {
+                        try {
+                            throw cause;
+                        } catch (Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
                     }
                 });
             }
         });
-
         TextView close_pop = myDialog.findViewById(R.id.txtclose);
         close_pop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,9 +273,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         });
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
-
     }
-
     private void showPopupAdd(View view){
         myDialog.setContentView(R.layout.popup_add);
         addButton = myDialog.findViewById(R.id.btnadd);
@@ -286,3 +342,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         myDialog.show();
     }
 }
+
+
+//          case "USDT":
+//                  if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
+//                  biggy = new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
+//                  .setScale(3,BigDecimal.ROUND_HALF_EVEN);
+//                  }else{
+//                  balance.put("USDT",new BigDecimal(0));
+//                  }
+//                  break;
