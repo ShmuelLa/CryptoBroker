@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -13,6 +15,8 @@ import com.binance.api.client.BinanceApiAsyncRestClient;
 import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.domain.account.Order;
+import com.binance.api.client.domain.account.request.CancelOrderRequest;
+import com.binance.api.client.domain.account.request.CancelOrderResponse;
 import com.binance.api.client.domain.account.request.OrderRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -32,10 +37,11 @@ import java.util.concurrent.Executors;
 public class CancelOrderActivity extends AppCompatActivity {
     private DatabaseReference accountsDB;
     private FirebaseUser user;
-
+    private Button cancelOrderButton, emergencyButton;
     private Spinner clientSpinner, openOrdersSpinner;
     private ArrayList<String> clientsList = new ArrayList<>();
     private ArrayList<String> normalizedOrderList;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +56,9 @@ public class CancelOrderActivity extends AppCompatActivity {
                 .simple_spinner_dropdown_item, clientsList);
         clientSpinner.setAdapter(clientsAdapter);
         createClientsSpinner();
+        cancelOrderButton = findViewById(R.id.sendCancelOderButton);
+        emergencyButton = findViewById(R.id.emergencyButton);
+        progressBar = findViewById(R.id.progressBar);
     }
 
     public ArrayList<String> normalizeOrderListForSpinner(List<Order> beforeList) {
@@ -90,6 +99,30 @@ public class CancelOrderActivity extends AppCompatActivity {
                                             ArrayAdapter<String> ordersAdapter = new ArrayAdapter(CancelOrderActivity.this, android.R.layout
                                                     .simple_spinner_dropdown_item, normalizeOrderListForSpinner(orderList));
                                             openOrdersSpinner.setAdapter(ordersAdapter);
+                                            cancelOrderButton.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    String[] order = openOrdersSpinner.getSelectedItem().toString().trim().split(" ");
+                                                    Long oid = Long.parseLong(order[0].substring(1, order[0].length() - 1 ).trim());
+                                                    String symbol = order[1].trim();
+                                                    client.cancelOrder(new CancelOrderRequest(symbol, oid), new BinanceApiCallback<CancelOrderResponse>() {
+                                                        @Override
+                                                        public void onResponse(CancelOrderResponse cancelOrderResponse) {
+                                                            System.out.println(cancelOrderResponse.getStatus());
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(Throwable cause) {
+                                                            try {
+                                                                throw cause;
+                                                            } catch (Throwable throwable) {
+                                                                throwable.printStackTrace();
+                                                            }
+                                                        }
+                                                    });
+                                                    System.out.println("Nothing Happend...");
+                                                }
+                                            });
                                         }
                                     });
                                 }
@@ -120,7 +153,7 @@ public class CancelOrderActivity extends AppCompatActivity {
     public ArrayList<String> normalizeOrderListForSpinner(ArrayList<Order> beforeList) {
         ArrayList<String> result = new ArrayList<>();
         for (Order order : beforeList) {
-            String tmpOrder = order.getSymbol() + " " + order.getType() + " "  + order.getPrice();
+            String tmpOrder = "[" + order.getOrderId()+ "] " + order.getSymbol() + " " + order.getType() + " "  + order.getPrice();
             result.add(tmpOrder);
         }
         if (result.size() < 1) {
@@ -134,4 +167,6 @@ public class CancelOrderActivity extends AppCompatActivity {
                 .simple_spinner_dropdown_item, normalizedOrderList);
         openOrdersSpinner.setAdapter(ordersAdapter);
     }
+
+
 }
