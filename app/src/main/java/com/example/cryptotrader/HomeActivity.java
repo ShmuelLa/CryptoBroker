@@ -57,7 +57,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private DatabaseReference accounts_db;
     private FirebaseUser user;
     private ProgressBar progressBar;
-    private  HashMap<String,String > balance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +74,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         user = FirebaseAuth.getInstance().getCurrentUser();
         accounts_db = FirebaseDatabase.getInstance().getReference("Accounts");
         progressBar = findViewById(R.id.progressBar);
-        balance = new HashMap<>();
-        balance.put("BTC","0.0000");
-        balance.put("USDT","0.0000");
-        balance.put("ETH","0.0000");
-        balance.put("ADA","0.0000");
     }
 
     @Override
@@ -136,7 +130,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
             @Override
             public void afterTextChanged(Editable s) {
-                ctCredentials credentials = ctCredentialsArrayList.get(nList.indexOf(cname.get(0)));
+                ctCredentials credentials = ctCredentialsArrayList.get(nList.indexOf(s.toString()));
                 BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(credentials.getKey(), credentials.getSecret());
                 BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
                 HashMap<String,AssetBalance > allAssets = new HashMap<>();
@@ -188,15 +182,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                             }
                         }
 
-                    }
-                });
-
-                client.getAllAssets(new BinanceApiCallback<List<Asset>>() {
-                    @Override
-                    public void onResponse(List<Asset> assets) {
-                        for(Asset ass : assets){
-                            System.out.println(ass.getAssetName() + " " + ass.getFreeUserChargeAmount());
-                        }
                     }
                 });
             }
