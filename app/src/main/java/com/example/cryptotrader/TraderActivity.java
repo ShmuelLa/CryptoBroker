@@ -34,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class TraderActivity extends AppCompatActivity implements View.OnClickListener {
     private DatabaseReference accountsDB;
@@ -99,12 +100,8 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
             chosenCoinAmount = fundText.getText().toString();
             chosenCoinTargetPrice = priceText.getText().toString();
             chosenSymbol = chosenTargetCoin + chosenFundCoin;
-//            System.out.println("Beforeeee" + chosenClient+" "+chosenOrderType+" "+ chosenFundCoin +" "+ chosenTargetCoin +" "+chosenSymbol
-//                    + chosenCoinAmount + " " + chosenCoinTargetPrice);
             if (checkOrderValidity()) return;
             if (chosenOrderType.equals("Limit Buy") || chosenOrderType.equals("Limit Sell")) {
-//                System.out.println(chosenClient+" "+chosenOrderType+" "+ chosenFundCoin +" "+ chosenTargetCoin +" "+chosenSymbol
-//                + chosenCoinAmount + " " + chosenCoinTargetPrice);
                 initiateLimitOrder();
             }
         }
@@ -145,50 +142,39 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
                             BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
                             if (chosenOrderType.equals("Limit Buy") && !chosenClient.equals("All")) {
                                 client.newOrder(limitBuy(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinTargetPrice)
-                                        ,new BinanceApiCallback<NewOrderResponse>() {
-                                            @Override
-                                            public void onResponse(NewOrderResponse newOrderResponse) {
-                                                showOrderPopup("Success"
-                                                        , "Order " + newOrderResponse.getClientOrderId() + " "
-                                                                + newOrderResponse.getSymbol() + " Created");
-                                            }
-
-                                            @Override
-                                            public void onFailure(Throwable cause) {
-                                                try {
-                                                    throw cause;
-                                                } catch (Throwable throwable) {
-                                                    throwable.printStackTrace();
-                                                }
-                                            }
-                                        });
+                                        , createOrderCallback());
                             }
                             else if (chosenOrderType.equals("Limit Sell") && !chosenClient.equals("All")) {
                                 System.out.println("stage 88888 " + chosenSymbol);
                                 client.newOrder(limitSell(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinTargetPrice)
-                                        ,new BinanceApiCallback<NewOrderResponse>() {
-                                            @Override
-                                            public void onResponse(NewOrderResponse newOrderResponse) {
-                                                showOrderPopup("Success"
-                                                        , "Order " + newOrderResponse.getClientOrderId() + " "
-                                                + newOrderResponse.getSymbol() + " Created");
-                                            }
-
-                                            @Override
-                                            public void onFailure(Throwable cause) {
-                                                try {
-                                                    throw cause;
-                                                } catch (Throwable throwable) {
-                                                    throwable.printStackTrace();
-                                                }
-                                            }
-                                        });
+                                        , createOrderCallback());
                             }
                         }
                     });
                 }
             }
         });
+    }
+
+    private BinanceApiCallback<NewOrderResponse> createOrderCallback() {
+        BinanceApiCallback<NewOrderResponse> result = new BinanceApiCallback<NewOrderResponse>() {
+            @Override
+            public void onResponse(NewOrderResponse newOrderResponse) {
+                showOrderPopup("Success"
+                        , "Order: \n " + newOrderResponse.getOrderId() + "\n"
+                                + newOrderResponse.getSymbol() + "\nCreated");
+            }
+            @Override
+            public void onFailure(Throwable cause) {
+                try {
+                    showOrderPopup("Error", cause.toString().split(":")[1]);
+                    throw cause;
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+            }
+        };
+        return result;
     }
 
     void showOrderPopup(String topic, String msg) {
