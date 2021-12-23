@@ -82,7 +82,6 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
         symbolTargetSpinner.setAdapter(symbolTargetAdapter);
         fundText = findViewById(R.id.fundsAmountText);
         priceText = findViewById(R.id.marketPriceText);
-
         myDialog = new Dialog(this);
         sendOrderButton.setOnClickListener(this);
     }
@@ -174,27 +173,6 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
         myDialog.setContentView(R.layout.popup_invalid_order_warning);
         inputErrorMessage = myDialog.findViewById(R.id.orderInputErrorText);
         inputErrorMessage.setText(errorMsg);
-//        TextView closePopupText = myDialog.findViewById(R.id.txtclose);
-//        mainTraderButton = myDialog.findViewById(R.id.mainTraderButton);
-//        mainTraderButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivity(new Intent(HomeActivity.this, TraderActivity.class));
-//            }
-//        });
-//        cancelTradeButton = myDialog.findViewById(R.id.cancelTradeButton);
-//        cancelTradeButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivity(new Intent(HomeActivity.this, CancelOrderActivity.class));
-//            }
-//        });
-//        closePopupText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                myDialog.dismiss();
-//            }
-//        });
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
