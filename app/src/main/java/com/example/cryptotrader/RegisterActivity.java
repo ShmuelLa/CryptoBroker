@@ -51,7 +51,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 if(emailAndPass == null){
                     break;
                 }
-                showProgressBar(true);
+                showProgression(true);
                 registerUser(emailAndPass[0],emailAndPass[1]);
         }
     }
@@ -78,7 +78,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
 
-    private void showProgressBar(boolean show){
+    private void showProgression(boolean show){
         if (show){
             progressBar.setVisibility(View.VISIBLE);
         }
@@ -89,14 +89,17 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     private void announceSuccess(boolean success){
-        if(success){
-            Toast.makeText(RegisterActivity.this, "User Registered Successfully! Please verify your e-mail address",
-                    Toast.LENGTH_LONG).show();
-        }
+        showProgression(false);
         if(!success){
             Toast.makeText(RegisterActivity.this, "Registration Failed!", Toast.LENGTH_LONG).show();
         }
-        showProgressBar(false);
+        if(success){
+            Toast.makeText(RegisterActivity.this, "User Registered Successfully! Please verify your e-mail address",
+                    Toast.LENGTH_LONG).show();
+            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+        }
+
+
     }
 
 
@@ -118,7 +121,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                         announceSuccess(true);
                                         FirebaseUser u = mAuth.getCurrentUser();
                                         u.sendEmailVerification();
-                                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+
                                     }
                                     else{
                                         announceSuccess(false);
@@ -128,7 +131,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             });
                         }
                         else{
-                            announceSuccess(true);
+                            announceSuccess(false);
                         }
                     }
                 });

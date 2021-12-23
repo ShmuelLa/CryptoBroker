@@ -230,22 +230,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 String a_name = accountName.getText().toString().trim();
                 String key = keyInput.getText().toString().trim();
                 String secret = secretInput.getText().toString().trim();
-                accounts_db.child(user.getUid()).child(a_name)
-                        .setValue(new ctCredentials(key,secret))
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(HomeActivity.this,
-                                    "Account added successfully",
-                                    Toast.LENGTH_LONG).show();
-                            myDialog.dismiss();
-                        }
-                        else {
-                            Toast.makeText(HomeActivity.this, "Something went wrong. Please try again", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+                boolean success = addUser(a_name,key,secret);
+                if(success){
+                    Toast.makeText(HomeActivity.this,
+                            "Account added successfully",
+                            Toast.LENGTH_LONG).show();
+                    myDialog.dismiss();
+
+                }
+                if (!success){
+                    Toast.makeText(HomeActivity.this, "Something went wrong. Please try again", Toast.LENGTH_LONG).show();
+                }
+
             }
         });
         TextView closePopupText = myDialog.findViewById(R.id.txtclose);
@@ -257,6 +253,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         });
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
+    }
+    private boolean addUser(String name,String key,String secret){
+        return addToDB(name,key,secret);
+    }
+    private boolean addToDB(String name,String key,String secret){
+        final boolean[] success = {false};
+        accounts_db.child(user.getUid()).child(name)
+                .setValue(new ctCredentials(key,secret))
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            success[0] = true;
+                        }
+                    }
+                });
+        return success[0];
     }
 
     void showPopupTradeChooser(View view) {

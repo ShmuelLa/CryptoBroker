@@ -45,7 +45,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.loginButton:
-                userLogin();
+                String[] emailAndPass = validateEmailAndPass();
+                if (emailAndPass == null){
+                    break;
+                }
+                showProgression(true);
+                userLogin(emailAndPass[0],emailAndPass[1]);
+
                 break;
             case R.id.register:
                 startActivity(new Intent(this, RegisterActivity.class));
@@ -56,8 +62,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         }
     }
-
-    private void userLogin() {
+    private void showProgression(boolean show){
+        if (show){
+            progressBar.setVisibility(View.VISIBLE);
+        }
+        if(!show){
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+    private String[] validateEmailAndPass(){
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
@@ -67,9 +80,39 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (password.length() < 6){
             editTextPassword.setError("Invalid Password! Please provide at least 6 characters");
             editTextPassword.requestFocus();
+            return null;
+        }
+        return new String[] {email,password};
+    }
+    /*
+    * 0  success
+    * 1 need to verify email
+    * 2 failure
+    * */
+    private void announceSuccess(int event){
+        showProgression(false);
+        if (event == 0){
             return;
         }
-        progressBar.setVisibility(View.VISIBLE);
+        notifyFailure(event);
+
+    }
+    private void notifyFailure(int event){
+        String txt = "";
+        if (event == 1){
+            txt = "Verification mail sent again. Please check your e-mail";
+        }
+        if (event == 2){
+            txt = "Failed to Login! Please try again";
+        }
+        Toast.makeText(LoginActivity.this
+                , txt
+                ,Toast.LENGTH_LONG).show();
+    }
+
+    private void userLogin(String email,String password) {
+
+
         mAuth.signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -77,21 +120,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if(task.isSuccessful()){
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user.isEmailVerified()) {
+                        announceSuccess(0);
                         startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                        progressBar.setVisibility(View.GONE);
+
                     }
                     else {
                         user.sendEmailVerification();
-                        Toast.makeText(LoginActivity.this
-                                , "Verification mail sent again. Please check your e-mail"
-                                ,Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.GONE);
+                        announceSuccess(1);
+
                     }
                 }
                 else {
-                    Toast.makeText(LoginActivity.this
-                            , "Failed to Login! Please try again", Toast.LENGTH_LONG).show();
-                    progressBar.setVisibility(View.GONE);
+                    announceSuccess(2);
+
                 }
             }
         });

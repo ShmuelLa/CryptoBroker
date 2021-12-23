@@ -147,15 +147,7 @@ public class CancelOrderActivity extends AppCompatActivity {
                     }
                 });
 
-//                ArrayList<Order> orderList = ctAccount.getAllOpenOrdersList(chosenUser, accountsDB, user);
-//                System.out.println(orderList.toString());
-//                ArrayAdapter<String> ordersAdapter = new ArrayAdapter(CancelOrderActivity.this, android.R.layout
-//                        .simple_spinner_dropdown_item, orderList);
-//                openOrdersSpinner.setAdapter(ordersAdapter);
-//                String chosenUser = ctUtils.getSpinnerChosenText(clientSpinner);
-//                orderList = ctAccount.getAllOpenOrdersList(chosenUser, accountsDB, user);
-//                System.out.println(orderList.toString());
-//                normalizedOrderList = normalizeOrderListForSpinner(orderList);
+
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
