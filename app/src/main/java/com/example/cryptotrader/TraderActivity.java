@@ -24,7 +24,6 @@ import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.domain.TimeInForce;
 import com.binance.api.client.domain.account.NewOrderResponse;
-import com.binance.api.client.exception.BinanceApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,7 +39,7 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
     private DatabaseReference accountsDB;
     private FirebaseUser user;
     private Button sendOrderButton;
-    private TextView fundText, priceText, inputErrorMessage;
+    private TextView fundText, priceText, inputMessage, popupTopic;
     private final String[] tradeOptions = {"Buy", "Sell", "Limit Buy", "Limit Sell", "Futures Buy", "Futures Sell"};
     private final String[] symbolFundOptions = {"USDT", "BUSD", "BNB"};
     private final String[] symbolTargetOptions = {"BTC", "ETH", "ADA", "MANA", "BNB"};
@@ -114,17 +113,17 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
     @SuppressLint("SetTextI18n")
     boolean checkOrderValidity() {
         if (chosenCoinAmount == null) {
-            showOrderErrorPopup("Any order must have a coin amount (Null)");
+            showOrderPopup("Error", "Any order must have a coin amount (Null)");
             return true;
         }
         else if (chosenCoinAmount.isEmpty()) {
-            showOrderErrorPopup("Any order must have a coin amount (isEmpty)");
+            showOrderPopup("Error", "Any order must have a coin amount (isEmpty)");
             return true;
         }
         else if ((chosenOrderType.equals("Limit Buy") || chosenOrderType.equals("Limit Sell"))
                 && (chosenCoinTargetPrice == null || Integer.parseInt(chosenCoinTargetPrice) == 0
                 || Float.parseFloat(chosenCoinTargetPrice) == 0) || chosenCoinTargetPrice.isEmpty()) {
-            showOrderErrorPopup("Limit order must have a coin market value");
+            showOrderPopup("Error", "Limit order must have a coin market value");
             return true;
         }
         return false;
@@ -146,7 +145,23 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
                             BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
                             if (chosenOrderType.equals("Limit Buy") && !chosenClient.equals("All")) {
                                 client.newOrder(limitBuy(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinTargetPrice)
-                                        ,response -> System.out.println(response));
+                                        ,new BinanceApiCallback<NewOrderResponse>() {
+                                            @Override
+                                            public void onResponse(NewOrderResponse newOrderResponse) {
+                                                showOrderPopup("Success"
+                                                        , "Order " + newOrderResponse.getClientOrderId() + " "
+                                                                + newOrderResponse.getSymbol() + " Created");
+                                            }
+
+                                            @Override
+                                            public void onFailure(Throwable cause) {
+                                                try {
+                                                    throw cause;
+                                                } catch (Throwable throwable) {
+                                                    throwable.printStackTrace();
+                                                }
+                                            }
+                                        });
                             }
                             else if (chosenOrderType.equals("Limit Sell") && !chosenClient.equals("All")) {
                                 System.out.println("stage 88888 " + chosenSymbol);
@@ -154,7 +169,9 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
                                         ,new BinanceApiCallback<NewOrderResponse>() {
                                             @Override
                                             public void onResponse(NewOrderResponse newOrderResponse) {
-                                                System.out.println(newOrderResponse.getStatus());
+                                                showOrderPopup("Success"
+                                                        , "Order " + newOrderResponse.getClientOrderId() + " "
+                                                + newOrderResponse.getSymbol() + " Created");
                                             }
 
                                             @Override
@@ -174,10 +191,12 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
         });
     }
 
-    void showOrderErrorPopup(String errorMsg) {
+    void showOrderPopup(String topic, String msg) {
         myDialog.setContentView(R.layout.popup_invalid_order_warning);
-        inputErrorMessage = myDialog.findViewById(R.id.orderInputErrorText);
-        inputErrorMessage.setText(errorMsg);
+        inputMessage = myDialog.findViewById(R.id.orderInputErrorText);
+        popupTopic = myDialog.findViewById(R.id.orderInputTopic);
+        popupTopic.setText(topic);
+        inputMessage.setText(msg);
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }

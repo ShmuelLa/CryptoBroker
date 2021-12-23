@@ -10,7 +10,7 @@
     android:layout_gravity="center">
 
     <TextView
-        android:id="@+id/orderInputErrorTopic"
+        android:id="@+id/orderInputTopic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -36,7 +36,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/orderInputErrorTopic"
+        app:layout_constraintTop_toBottomOf="@+id/orderInputTopic"
         app:layout_constraintVertical_bias="0.414" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
