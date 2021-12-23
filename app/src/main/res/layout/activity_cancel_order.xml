@@ -54,6 +54,7 @@
         app:layout_constraintTop_toBottomOf="@+id/openOrdersSpinner" />
 
     <Button
+        android:id="@+id/emergencyButton"
         android:layout_width="300dp"
         android:layout_height="100dp"
         android:layout_marginTop="52dp"
