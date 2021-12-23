@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (emailAndPass == null){
                     break;
                 }
-                progressBar.setVisibility(View.VISIBLE);
+                showProgression(true);
                 userLogin(emailAndPass[0],emailAndPass[1]);
 
                 break;
@@ -60,6 +60,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(new Intent(this, ForgotPasswordActivity.class));
                 break;
 
+        }
+    }
+    private void showProgression(boolean show){
+        if (show){
+            progressBar.setVisibility(View.VISIBLE);
+        }
+        if(!show){
+            progressBar.setVisibility(View.GONE);
         }
     }
     private String[] validateEmailAndPass(){
@@ -82,11 +90,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     * 2 failure
     * */
     private void announceSuccess(int event){
-        progressBar.setVisibility(View.GONE);
-        String txt = "";
+        showProgression(false);
         if (event == 0){
             return;
         }
+        notifyFailure(event);
+
+    }
+    private void notifyFailure(int event){
+        String txt = "";
         if (event == 1){
             txt = "Verification mail sent again. Please check your e-mail";
         }
