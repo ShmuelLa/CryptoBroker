@@ -2,8 +2,6 @@ package com.example.cryptotrader;
 
 import androidx.annotation.NonNull;
 
-import com.binance.api.client.BinanceApiAsyncRestClient;
-import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.domain.account.Order;
@@ -19,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ctAccount {
     private final Executor executor;
@@ -37,22 +36,24 @@ public class ctAccount {
         clientName = name;
     }
 
-//    public static ctCredentials getClientCredentialsByName(String requestedClient, DatabaseReference db, FirebaseUser user) {
-//        ctCredentials result = new ctCredentials();
-//        db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                if(task.isSuccessful()) {
-//                    GenericTypeIndicator<HashMap<String, ctCredentials>> gType =
-//                            new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
-//                    HashMap<String, ctCredentials> map = task.getResult().getValue(gType);
-//                    map.forEach((clientName, clientTokens) ->
-//                if(clientName.equals(requestedClient) result = clientTokens;));
-//                }
-//            }
-//        });
-//        return result;
-//    }
+    public ctCredentials getClientCredentialsByName(String requestedClient, DatabaseReference db, FirebaseUser user) {
+        AtomicReference<ctCredentials> result = new AtomicReference<>(new ctCredentials());
+        db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()) {
+                    GenericTypeIndicator<HashMap<String, ctCredentials>> gType =
+                            new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
+                    HashMap<String, ctCredentials> map = task.getResult().getValue(gType);
+                    map.forEach((clientName, clientTokens) ->
+                    {
+                        if(clientName.equals(requestedClient)) result.set(clientTokens);
+                    });
+                }
+            }
+        });
+        return result.get();
+    }
 
     /**
      * -= Async Task May cause inconsistent performance when used incorrectly =-
@@ -107,42 +108,11 @@ public class ctAccount {
      * Returns a List of BinanceAPI Order objects the are currently open for a specific requested
      * user (via username).
      *
-     * @param argClientName The current client name as shown on a spinner for example
+     * @param clientName The current client name as shown on a spinner for example
      * @param accountsDB FireBase DB object of the current connected user
      * @param user FireBase user object of the current connected user
      * @return List of BinanceAPI Order objects
      */
-//    public static ArrayList<Order> getAllOpenOrdersList(String argClientName, DatabaseReference accountsDB, FirebaseUser user) {
-//
-//        accountsDB.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DataSnapshot> task) {
-//                if(task.isSuccessful()) {
-//                    GenericTypeIndicator<HashMap<String, ctCredentials>> gType =
-//                            new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
-//                    HashMap<String,  ctCredentials> map = task.getResult().getValue(gType);
-//                    map.forEach((clientNameItr, clientTokens) ->
-//                    {
-//                        System.out.println("!!!!!! " + clientNameItr + ", " + clientTokens + " !!!!!!!" );
-//                        if (clientNameItr.equals(argClientName)) {
-//                            BinanceApiClientFactory factory = BinanceApiClientFactory
-//                                    .newInstance(clientTokens.getKey(), clientTokens.getSecret());
-//                            BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-//                            client.getOpenOrders(new OrderRequest(null), new BinanceApiCallback<List<Order>>() {
-//                                @Override
-//                                public void onResponse(List<Order> orders) {
-//                                    result = new ArrayList(orders);
-//
-//                                }
-//                            });
-//                        }
-//                    });
-//                }
-//            }
-//        });
-//        return ordersResult;
-//    }
-
     public List<Order> getAllOpenOrdersList(String clientName, DatabaseReference accountsDB, FirebaseUser user) {
         executor.execute(new Runnable() {
             @Override
@@ -170,18 +140,4 @@ public class ctAccount {
         });
         return resultOrdersSync;
     }
-
-
-
-//    public static
-
-//    BinanceApiClientFactory factory = BinanceApiClientFactory
-//            .newInstance(otherCredentials.getKey(), otherCredentials.getSecret());
-//    BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-//        client.getAccount(new BinanceApiCallback<Account>() {
-//        @Override
-//        public void onResponse(Account account) {
-//            System.out.println(clientName + "  " + account.getBalances());
-//        }
-//    });
 }
