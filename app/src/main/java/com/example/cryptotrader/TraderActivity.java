@@ -150,17 +150,12 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
                                     .newInstance(clientTokens.getKey(), clientTokens.getSecret());
                             BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
                             if (chosenOrderType.equals("Limit Buy")) {
-                                client.newOrder(limitBuy(chosenSymbol
-                                        , TimeInForce.GTC
-                                        , chosenCoinAmount
-                                        , chosenCoinTargetPrice)
+                                client.newOrder(limitBuy(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinTargetPrice)
                                         , createOrderCallback());
                             }
                             else if (chosenOrderType.equals("Limit Sell")) {
-                                client.newOrder(limitSell(chosenSymbol
-                                        , TimeInForce.GTC
-                                        , chosenCoinAmount
-                                        , chosenCoinTargetPrice)
+                                System.out.println("stage 88888 " + chosenSymbol);
+                                client.newOrder(limitSell(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinTargetPrice)
                                         , createOrderCallback());
                             }
                         }

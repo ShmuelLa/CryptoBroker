@@ -67,6 +67,7 @@ public class ctAccount {
      */
     public static ArrayList<String> getClientNamesListAsync(DatabaseReference db, FirebaseUser user, String firstObject) {
         ArrayList<String> result = new ArrayList<>();
+        result.add(firstObject);
         db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
