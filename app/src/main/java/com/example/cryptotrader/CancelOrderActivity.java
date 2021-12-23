@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.binance.api.client.BinanceApiAsyncRestClient;
 import com.binance.api.client.BinanceApiCallback;
@@ -102,27 +103,42 @@ public class CancelOrderActivity extends AppCompatActivity {
                                             cancelOrderButton.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
-                                                    String[] order = openOrdersSpinner.getSelectedItem().toString().trim().split(" ");
-                                                    Long oid = Long.parseLong(order[0].substring(1, order[0].length() - 1 ).trim());
-                                                    String symbol = order[1].trim();
-                                                    client.cancelOrder(new CancelOrderRequest(symbol, oid), new BinanceApiCallback<CancelOrderResponse>() {
-                                                        @Override
-                                                        public void onResponse(CancelOrderResponse cancelOrderResponse) {
-                                                            System.out.println(cancelOrderResponse.getStatus());
-                                                        }
-
-                                                        @Override
-                                                        public void onFailure(Throwable cause) {
-                                                            try {
-                                                                throw cause;
-                                                            } catch (Throwable throwable) {
-                                                                throwable.printStackTrace();
+                                                    if(!openOrdersSpinner.getSelectedItem().toString().equals("None"))
+                                                    {
+                                                        String[] order = openOrdersSpinner.getSelectedItem().toString().trim().split(" ");
+                                                        Long oid = Long.parseLong(order[0].substring(1, order[0].length() - 1).trim());
+                                                        String symbol = order[1].trim();
+                                                        client.cancelOrder(new CancelOrderRequest(symbol, oid), new BinanceApiCallback<CancelOrderResponse>() {
+                                                            @Override
+                                                            public void onResponse(CancelOrderResponse cancelOrderResponse) {
+                                                                System.out.println(cancelOrderResponse.getStatus());
                                                             }
-                                                        }
-                                                    });
-                                                    System.out.println("Nothing Happend...");
+
+                                                            @Override
+                                                            public void onFailure(Throwable cause) {
+                                                                try {
+                                                                    throw cause;
+                                                                } catch (Throwable throwable) {
+                                                                    throwable.printStackTrace();
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                    else{
+                                                        Toast.makeText(CancelOrderActivity.this, "No Orders to cancel!", Toast.LENGTH_LONG).show();
+                                                    }
                                                 }
                                             });
+                                        }
+
+                                        @Override
+                                        public void onFailure(Throwable cause) {
+                                            try {
+                                                Toast.makeText(CancelOrderActivity.this, "Couldn't retrieve Open Orders. Please try again.", Toast.LENGTH_LONG).show();
+                                                throw cause;
+                                            } catch (Throwable throwable) {
+                                                throwable.printStackTrace();
+                                            }
                                         }
                                     });
                                 }
@@ -143,6 +159,7 @@ public class CancelOrderActivity extends AppCompatActivity {
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
         if (normalizedOrderList != null) {
