@@ -79,7 +79,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         balance.put("BTC","0.0000");
         balance.put("USDT","0.0000");
         balance.put("ETH","0.0000");
-        
         balance.put("ADA","0.0000");
     }
 
