@@ -67,7 +67,6 @@ public class ctAccount {
      */
     public static ArrayList<String> getClientNamesListAsync(DatabaseReference db, FirebaseUser user, String firstObject) {
         ArrayList<String> result = new ArrayList<>();
-        result.add(firstObject);
         db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -82,6 +81,16 @@ public class ctAccount {
         return result;
     }
 
+    /**
+     * -= Sync Task Requires thread management =-
+     * Returns a list of current client names as String.
+     * This method is for use on spinners and other methods that require a String representation
+     * of client name.
+     *
+     * @param db FireBase DB object of the current connected user
+     * @param user FireBase user object of the current connected user
+     * @return ArrayList of name representing the current user clients
+     */
     public ArrayList<String> getClientNamesList(DatabaseReference db, FirebaseUser user) {
         executor.execute(new Runnable() {
             @Override
