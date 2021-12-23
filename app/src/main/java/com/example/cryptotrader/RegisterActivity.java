@@ -24,6 +24,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private ProgressBar progressBar;
     private EditText editTextEmail, editTextPassword, editTextPasswordValidation;
     private FirebaseAuth mAuth;
+    private static final int PASS_LENGTH = 6 ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,11 +47,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 startActivity(new Intent(this, LoginActivity.class));
                 break;
             case R.id.registerButton:
-                registerUser();
+                String[] emailAndPass = validateEmailAndPass();
+                if(emailAndPass == null){
+                    break;
+                }
+                showProgressBar(true);
+                registerUser(emailAndPass[0],emailAndPass[1]);
         }
     }
-
-    private void registerUser() {
+    /*take an advice from other group devs if splitting this function is the right thing to do*/
+    private String[] validateEmailAndPass(){
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
         String passwordValidation = editTextPasswordValidation.getText().toString().trim();
@@ -58,19 +64,43 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             editTextEmail.setError("Invalid E-Mail address! Please provide a valid address");
             editTextEmail.requestFocus();
         }
-        if(password.length() < 6){
+        if(password.length() < PASS_LENGTH){
             editTextPassword.setError("Invalid Password! Please provide at least 6 characters");
             editTextPassword.requestFocus();
-            return;
+            return null;
         }
         if(!password.equals(passwordValidation)){
             editTextPasswordValidation.setError("Re-Entered Password does not match the above");
             editTextPasswordValidation.requestFocus();
-            return;
+            return null;
         }
+        return new String[] {email,password};
+    }
 
-        progressBar.setVisibility(View.VISIBLE);
 
+    private void showProgressBar(boolean show){
+        if (show){
+            progressBar.setVisibility(View.VISIBLE);
+        }
+        if(!show){
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+
+
+    private void announceSuccess(boolean success){
+        if(success){
+            Toast.makeText(RegisterActivity.this, "User Registered Successfully! Please verify your e-mail address",
+                    Toast.LENGTH_LONG).show();
+        }
+        if(!success){
+            Toast.makeText(RegisterActivity.this, "Registration Failed!", Toast.LENGTH_LONG).show();
+        }
+        showProgressBar(false);
+    }
+
+
+    private void registerUser(String email,String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -85,25 +115,22 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()){
-                                        Toast.makeText(RegisterActivity.this, "User Registered Successfully! Please verify your e-mail address", Toast.LENGTH_LONG).show();
+                                        announceSuccess(true);
                                         FirebaseUser u = mAuth.getCurrentUser();
                                         u.sendEmailVerification();
                                         startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-                                        progressBar.setVisibility(View.GONE);
                                     }
                                     else{
-                                        Toast.makeText(RegisterActivity.this, "Registration Failed!", Toast.LENGTH_LONG).show();
-                                        progressBar.setVisibility(View.GONE);
+                                        announceSuccess(false);
+
                                     }
                                 }
                             });
                         }
                         else{
-                            Toast.makeText(RegisterActivity.this, "Registration Failed!", Toast.LENGTH_LONG).show();
-                            progressBar.setVisibility(View.GONE);
+                            announceSuccess(true);
                         }
                     }
                 });
-
     }
 }
