@@ -1,39 +1,29 @@
 package com.example.cryptotrader;
 
-import static com.binance.api.client.domain.account.NewOrder.limitSell;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.collection.CircularArray;
-
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.binance.api.client.BinanceApiAsyncRestClient;
 import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiClientFactory;
-import com.binance.api.client.domain.TimeInForce;
 import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.AssetBalance;
-import com.binance.api.client.domain.general.Asset;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,25 +32,26 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
 
     private ImageButton wallet, chart, add, profile;
-    private Button addButton, mainTraderButton, cancelTradeButton,bit_value,eth_value,ada_value,usdt_value;
+    private Button addButton, mainTraderButton, cancelTradeButton,bit_value,eth_value,ada_value,mana_value,bnb_value;
     private Dialog myDialog;
     private EditText accountName, keyInput, secretInput;
     private DatabaseReference accounts_db;
     private FirebaseUser user;
     private ProgressBar progressBar;
+    private HashMap<String, BigDecimal> balance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        balance = new HashMap<>();
         myDialog = new Dialog(this);
         setContentView(R.layout.activity_home);
         add = findViewById(R.id.add);
@@ -103,7 +94,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         bit_value = myDialog.findViewById(R.id.bit_value);
         eth_value = myDialog.findViewById(R.id.eth_value);
         ada_value = myDialog.findViewById(R.id.ada_value);
-        usdt_value = myDialog.findViewById(R.id.usdt_value);
+        bnb_value = myDialog.findViewById(R.id.bnb_value);
+        mana_value = myDialog.findViewById(R.id.mana_value);
         accounts_db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -142,41 +134,68 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                             allAssets.put(ass.getAsset(),ass);
                         }
                         for (String coin : allAssets.keySet()){
+                            BigDecimal biggy = new BigDecimal(0);
                             switch (coin){
                                 case "BTC":
                                     if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
-                                        bit_value.setText("Bitcoin:  " +
-                                                new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
-                                                        .setScale(10,BigDecimal.ROUND_HALF_EVEN).toPlainString());
+                                        biggy = new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
+                                                .setScale(3,BigDecimal.ROUND_HALF_EVEN);
+                                        bit_value.setText("BTC:  " +biggy.toPlainString());
+                                        balance.put("BTC", biggy);
                                     }else{
-                                        bit_value.setText("Bitcoin:  " + "0.0000");
+                                        bit_value.setText("BTC:  " + biggy.toPlainString());
+                                        balance.put("BTC", new BigDecimal(0));
                                     }
                                     break;
                                 case "ETH":
                                     if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
-                                        eth_value.setText("Ethereum:  " +
-                                                new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
-                                                        .setScale(10,BigDecimal.ROUND_HALF_EVEN).toPlainString());
+                                        biggy = new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
+                                                .setScale(3,BigDecimal.ROUND_HALF_EVEN);
+                                        eth_value.setText("ETH:  " +biggy.toPlainString());
+                                        balance.put("ETH", biggy);
                                     }else{
-                                        eth_value.setText("Ethereum:  " + "0.0000");
+                                        eth_value.setText("ETH:  " + "0.0000");
+                                        balance.put("ETH", new BigDecimal(0));
                                     }
                                     break;
                                 case "ADA":
                                     if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
-                                        ada_value.setText("Cardano:  " +
-                                                new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
-                                                        .setScale(10,BigDecimal.ROUND_HALF_EVEN).toPlainString());
+                                        biggy = new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
+                                                .setScale(3,BigDecimal.ROUND_HALF_EVEN);
+                                        ada_value.setText("ADA:  " +biggy.toPlainString());
+                                        balance.put("ADA", biggy);
                                     }else{
-                                        ada_value.setText("Cardano:  " + "0.0000");
+                                        ada_value.setText("ADA:  " + "0.0000");
+                                        balance.put("ADA",new BigDecimal(0));
                                     }
                                     break;
                                 case "USDT":
                                     if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
-                                        usdt_value.setText("Usdt:  " +
-                                                new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
-                                                        .setScale(10,BigDecimal.ROUND_HALF_EVEN).toPlainString());
+                                        biggy = new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
+                                                .setScale(3,BigDecimal.ROUND_HALF_EVEN);
+                                        balance.put("USDT", biggy);
                                     }else{
-                                        usdt_value.setText("Tether/Usdt:  " + "0.0000");
+                                        balance.put("USDT",new BigDecimal(0));
+                                    }
+                                    break;
+                                case "BNB":
+                                    if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
+                                        biggy = new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
+                                                .setScale(3,BigDecimal.ROUND_HALF_EVEN);
+                                        bnb_value.setText("BNB:  " +biggy.toPlainString());
+                                        balance.put("BNB", biggy);
+                                    }else{
+                                        balance.put("BNB",new BigDecimal(0));
+                                    }
+                                    break;
+                                case "MANA":
+                                    if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
+                                        biggy = new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
+                                                .setScale(3,BigDecimal.ROUND_HALF_EVEN);
+                                        mana_value.setText("MANA:  " +biggy.toPlainString());
+                                        balance.put("MANA", biggy);
+                                    }else{
+                                        balance.put("MANA",new BigDecimal(0));
                                     }
                                     break;
                             }

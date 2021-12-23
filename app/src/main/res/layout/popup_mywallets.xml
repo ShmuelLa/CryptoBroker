@@ -17,7 +17,6 @@
         android:layout_gravity="end"
         android:gravity="center" />
 
-
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
         android:layout_width="match_parent"
@@ -33,55 +32,71 @@
             android:text="Select Account"
             android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
+
     <Button
         android:id="@+id/bit_value"
-        android:layout_marginTop="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:drawableLeft="@drawable/bit"
-        android:text="Bitcoin:  0.0000"
-        android:textSize="15dp"
-        android:textColor="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:layout_marginTop="10dp"
         android:background="#0000ffff"
-        android:enabled="false"/>
+        android:drawableLeft="@drawable/bit"
+        android:enabled="false"
+        android:text="BTC:  0.0000"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="15dp" />
+
     <Button
         android:id="@+id/ada_value"
-        android:layout_marginTop="20dp"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/ada"
-        android:text="Cardano:  0.0000"
-        android:textSize="15dp"
-        android:textColor="@color/white"
+        android:layout_marginTop="10dp"
         android:background="#0000ffff"
+        android:drawableLeft="@drawable/ada"
+        android:enabled="false"
+        android:text="ADA:  0.0000"
         android:textAllCaps="false"
-        android:enabled="false"/>
+        android:textColor="@color/white"
+        android:textSize="15dp" />
+
     <Button
         android:id="@+id/eth_value"
-        android:layout_marginTop="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:background="#0000ffff"
         android:drawableLeft="@drawable/eth"
-        android:text="Ethereum:  0.0000"
-        android:textSize="15dp"
+        android:enabled="false"
+        android:text="ETH:  0.0000"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:background="#0000ffff"
-        android:enabled="false"/>
-    <Button
-        android:id="@+id/usdt_value"
-        android:layout_marginTop="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/tether"
-        android:text="Usdt:  0.0000"
-        android:textAllCaps="false"
-        android:textSize="15dp"
-        android:textColor="@color/white"
-        android:background="#0000ffff"
-        android:enabled="false"/>
+        android:textSize="15dp" />
 
+    <Button
+        android:id="@+id/bnb_value"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:background="#0000ffff"
+        android:drawableLeft="@drawable/bnb"
+        android:enabled="false"
+        android:text="BNB:  0.0000"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="15dp" />
+
+    <Button
+        android:id="@+id/mana_value"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:background="#0000ffff"
+        android:drawableLeft="@drawable/mana"
+        android:enabled="false"
+        android:text="MANA:  0.0000"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="15dp" />
 
 
 </LinearLayout>
