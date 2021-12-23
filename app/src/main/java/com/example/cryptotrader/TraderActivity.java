@@ -6,9 +6,12 @@ import static com.binance.api.client.domain.account.NewOrder.limitSell;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -17,11 +20,9 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.binance.api.client.domain.account.Trade;
 import com.binance.api.client.BinanceApiAsyncRestClient;
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.domain.TimeInForce;
-import com.binance.api.client.domain.account.NewOrder;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,14 +33,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class TraderActivity extends AppCompatActivity implements View.OnClickListener {
     private DatabaseReference accountsDB;
     private FirebaseUser user;
     private Button sendOrderButton;
-    private TextView fundText, priceText;
+    private TextView fundText, priceText, inputErrorMessage;
     private final String[] tradeOptions = {"Buy", "Sell", "Limit Buy", "Limit Sell", "Futures Buy", "Futures Sell"};
     private final String[] symbolFundOptions = {"USDT", "BUSD", "BNB"};
     private final String[] symbolTargetOptions = {"BTC", "ETH", "ADA", "MANA", "BNB"};
@@ -54,6 +53,7 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
     private String chosenCoinMarketValue;
     private ProgressBar progressBar;
     private ImageButton profileButton;
+    private Dialog myDialog;
     ArrayList<String> clientsList = new ArrayList<>();
 
     @Override
@@ -82,12 +82,15 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
         symbolTargetSpinner.setAdapter(symbolTargetAdapter);
         fundText = findViewById(R.id.fundsAmountText);
         priceText = findViewById(R.id.marketPriceText);
+
+        myDialog = new Dialog(this);
         sendOrderButton.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.initiateOrderButton) {
+            if (checkOrderValidity()) return;
             chosenClient = ctUtils.getSpinnerChosenText(clientSpinner);
             chosenOrderType = ctUtils.getSpinnerChosenText(tradeOptionsSpinner);
             chosenCoinAmount = ctUtils.getSpinnerChosenText(symbolFundSpinner);
@@ -113,6 +116,26 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    boolean checkOrderValidity() {
+        if (chosenCoinAmount == null) {
+            showOrderErrorPopup("Any order must have a coin amount");
+            return true;
+        }
+        else if (chosenCoinAmount.isEmpty()) {
+            showOrderErrorPopup("Any order must have a coin amount");
+            return true;
+        }
+        else if ((chosenOrderType.equals("Limit Buy") || chosenOrderType.equals("Limit Sell"))
+                && (chosenCoinMarketValue == null || Integer.parseInt(chosenCoinMarketValue) == 0
+                || Float.parseFloat(chosenCoinMarketValue) == 0) || chosenCoinMarketValue.isEmpty()) {
+            showOrderErrorPopup("Limit order must have a coin market value");
+            return true;
+        }
+
+        return false;
+    }
+
     void initiateLimitOrder() {
         accountsDB.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
@@ -121,23 +144,58 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
                     GenericTypeIndicator<HashMap<String, ctCredentials>> gType =
                             new GenericTypeIndicator<HashMap<String, ctCredentials>>() {};
                     HashMap<String, ctCredentials> map = task.getResult().getValue(gType);
+                    assert map != null;
                     map.forEach((clientName, clientTokens) -> {
                         if (clientName.equals(chosenClient)) {
                             BinanceApiClientFactory factory = BinanceApiClientFactory
                                     .newInstance(clientTokens.getKey(), clientTokens.getSecret());
                             BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-                            if (chosenOrderType.equals("Limit Buy")) {
-                                client.newOrder(limitBuy(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinMarketValue)
-                                        ,response -> System.out.println(response));
+                            try {
+                                if (chosenOrderType.equals("Limit Buy") && !chosenClient.equals("All")) {
+                                    client.newOrder(limitBuy(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinMarketValue)
+                                            ,response -> System.out.println(response));
+                                }
+                                else if (chosenOrderType.equals("Limit Sell") && !chosenClient.equals("All")) {
+                                    client.newOrder(limitSell(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinMarketValue)
+                                            ,response -> System.out.println(response));
+                                }
                             }
-                            else if (chosenOrderType.equals("Limit Sell")) {
-                                client.newOrder(limitSell(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinMarketValue)
-                                        ,response -> System.out.println(response));
+                            catch (Exception e) {
+                                System.out.println("Limit order exception");
                             }
                         }
                     });
                 }
             }
         });
+    }
+
+    void showOrderErrorPopup(String errorMsg) {
+        myDialog.setContentView(R.layout.popup_invalid_order_warning);
+        inputErrorMessage = myDialog.findViewById(R.id.orderInputErrorText);
+        inputErrorMessage.setText(errorMsg);
+//        TextView closePopupText = myDialog.findViewById(R.id.txtclose);
+//        mainTraderButton = myDialog.findViewById(R.id.mainTraderButton);
+//        mainTraderButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(HomeActivity.this, TraderActivity.class));
+//            }
+//        });
+//        cancelTradeButton = myDialog.findViewById(R.id.cancelTradeButton);
+//        cancelTradeButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(HomeActivity.this, CancelOrderActivity.class));
+//            }
+//        });
+//        closePopupText.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                myDialog.dismiss();
+//            }
+//        });
+        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        myDialog.show();
     }
 }
