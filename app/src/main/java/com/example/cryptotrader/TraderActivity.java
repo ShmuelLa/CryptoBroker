@@ -107,6 +107,11 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    /**
+     * Checks if the order information is not valid for processing
+     *
+     * @return True if the order information is not valid, False otherwise
+     */
     @SuppressLint("SetTextI18n")
     boolean checkOrderValidity() {
         if (chosenCoinAmount == null) {
@@ -126,6 +131,10 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
         return false;
     }
 
+    /**
+     * Generates a limit order according to information filled by the user
+     * Will also mitigate errors and promp the customer accordingly
+     */
     void initiateLimitOrder() {
         accountsDB.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
@@ -136,17 +145,41 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
                     HashMap<String, ctCredentials> map = task.getResult().getValue(gType);
                     assert map != null;
                     map.forEach((clientName, clientTokens) -> {
-                        if (clientName.equals(chosenClient)) {
+                        if (clientName.equals(chosenClient) && !chosenClient.equals("All")) {
                             BinanceApiClientFactory factory = BinanceApiClientFactory
                                     .newInstance(clientTokens.getKey(), clientTokens.getSecret());
                             BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-                            if (chosenOrderType.equals("Limit Buy") && !chosenClient.equals("All")) {
-                                client.newOrder(limitBuy(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinTargetPrice)
+                            if (chosenOrderType.equals("Limit Buy")) {
+                                client.newOrder(limitBuy(chosenSymbol
+                                        , TimeInForce.GTC
+                                        , chosenCoinAmount
+                                        , chosenCoinTargetPrice)
                                         , createOrderCallback());
                             }
-                            else if (chosenOrderType.equals("Limit Sell") && !chosenClient.equals("All")) {
-                                System.out.println("stage 88888 " + chosenSymbol);
-                                client.newOrder(limitSell(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinTargetPrice)
+                            else if (chosenOrderType.equals("Limit Sell")) {
+                                client.newOrder(limitSell(chosenSymbol
+                                        , TimeInForce.GTC
+                                        , chosenCoinAmount
+                                        , chosenCoinTargetPrice)
+                                        , createOrderCallback());
+                            }
+                        }
+                        else if (chosenClient.equals("All")) {
+                            BinanceApiClientFactory factory = BinanceApiClientFactory
+                                    .newInstance(clientTokens.getKey(), clientTokens.getSecret());
+                            BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
+                            if (chosenOrderType.equals("Limit Buy")) {
+                                client.newOrder(limitBuy(chosenSymbol
+                                        , TimeInForce.GTC
+                                        , chosenCoinAmount
+                                        , chosenCoinTargetPrice)
+                                        , createOrderCallback());
+                            }
+                            else if (chosenOrderType.equals("Limit Sell")) {
+                                client.newOrder(limitSell(chosenSymbol
+                                        , TimeInForce.GTC
+                                        , chosenCoinAmount
+                                        , chosenCoinTargetPrice)
                                         , createOrderCallback());
                             }
                         }
@@ -156,6 +189,13 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
         });
     }
 
+    /**
+     * Creates a BinanceAPI callback object for validity check of each order
+     * will catch errors and return the cause for later processing and popup generation
+     * This method will also call the popup generation view avvordingly
+     *
+     * @return BinanceApiCallback<NewOrderResponse> with the order status and information
+     */
     private BinanceApiCallback<NewOrderResponse> createOrderCallback() {
         BinanceApiCallback<NewOrderResponse> result = new BinanceApiCallback<NewOrderResponse>() {
             @Override
@@ -177,6 +217,13 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
         return result;
     }
 
+    /**
+     * Creates a popup with information about success or fail of the current order
+     * contains information about the cause of failure and reason of success
+     *
+     * @param topic The topic of the popup, either Error or Success
+     * @param msg The popup message
+     */
     void showOrderPopup(String topic, String msg) {
         myDialog.setContentView(R.layout.popup_invalid_order_warning);
         inputMessage = myDialog.findViewById(R.id.orderInputErrorText);
