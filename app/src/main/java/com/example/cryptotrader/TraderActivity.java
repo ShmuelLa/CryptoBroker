@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -21,8 +20,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.binance.api.client.BinanceApiAsyncRestClient;
+import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.domain.TimeInForce;
+import com.binance.api.client.domain.account.NewOrderResponse;
+import com.binance.api.client.exception.BinanceApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,8 +51,10 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
     private String chosenSymbol;
     private String chosenOrderType;
     private String chosenClient;
+    private String chosenFundCoin;
+    private String chosenTargetCoin;
     private String chosenCoinAmount;
-    private String chosenCoinMarketValue;
+    private String chosenCoinTargetPrice;
     private ProgressBar progressBar;
     private ImageButton profileButton;
     private Dialog myDialog;
@@ -89,28 +93,20 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.initiateOrderButton) {
-            if (checkOrderValidity()) return;
             chosenClient = ctUtils.getSpinnerChosenText(clientSpinner);
             chosenOrderType = ctUtils.getSpinnerChosenText(tradeOptionsSpinner);
-            chosenCoinAmount = ctUtils.getSpinnerChosenText(symbolFundSpinner);
-            chosenCoinMarketValue = ctUtils.getSpinnerChosenText(symbolTargetSpinner);
-            chosenSymbol = chosenCoinMarketValue + chosenCoinAmount;
-            String fundsAmountTextString = fundText.getText().toString().trim();
-            String marketPriceTextString = priceText.getText().toString().trim();
-            if (chosenClient.equals("All")) {
-                if (chosenOrderType.equals("Limit Buy") || chosenOrderType.equals("Limit Sell")) {
-                    initiateLimitOrder();
-                }
-                System.out.println(chosenClient);
-                System.out.println(chosenOrderType + " " + chosenSymbol + " " + fundsAmountTextString + " " + marketPriceTextString);
-            }
-            else {
-                if (chosenOrderType.equals("Limit Buy") || chosenOrderType.equals("Limit Sell")) {
-                    initiateLimitOrder();
-
-                }
-                System.out.println(chosenClient);
-                System.out.println(chosenOrderType + " " + chosenSymbol);
+            chosenFundCoin = ctUtils.getSpinnerChosenText(symbolFundSpinner);
+            chosenTargetCoin = ctUtils.getSpinnerChosenText(symbolTargetSpinner);
+            chosenCoinAmount = fundText.getText().toString();
+            chosenCoinTargetPrice = priceText.getText().toString();
+            chosenSymbol = chosenTargetCoin + chosenFundCoin;
+//            System.out.println("Beforeeee" + chosenClient+" "+chosenOrderType+" "+ chosenFundCoin +" "+ chosenTargetCoin +" "+chosenSymbol
+//                    + chosenCoinAmount + " " + chosenCoinTargetPrice);
+            if (checkOrderValidity()) return;
+            if (chosenOrderType.equals("Limit Buy") || chosenOrderType.equals("Limit Sell")) {
+//                System.out.println(chosenClient+" "+chosenOrderType+" "+ chosenFundCoin +" "+ chosenTargetCoin +" "+chosenSymbol
+//                + chosenCoinAmount + " " + chosenCoinTargetPrice);
+                initiateLimitOrder();
             }
         }
     }
@@ -118,20 +114,19 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
     @SuppressLint("SetTextI18n")
     boolean checkOrderValidity() {
         if (chosenCoinAmount == null) {
-            showOrderErrorPopup("Any order must have a coin amount");
+            showOrderErrorPopup("Any order must have a coin amount (Null)");
             return true;
         }
         else if (chosenCoinAmount.isEmpty()) {
-            showOrderErrorPopup("Any order must have a coin amount");
+            showOrderErrorPopup("Any order must have a coin amount (isEmpty)");
             return true;
         }
         else if ((chosenOrderType.equals("Limit Buy") || chosenOrderType.equals("Limit Sell"))
-                && (chosenCoinMarketValue == null || Integer.parseInt(chosenCoinMarketValue) == 0
-                || Float.parseFloat(chosenCoinMarketValue) == 0) || chosenCoinMarketValue.isEmpty()) {
+                && (chosenCoinTargetPrice == null || Integer.parseInt(chosenCoinTargetPrice) == 0
+                || Float.parseFloat(chosenCoinTargetPrice) == 0) || chosenCoinTargetPrice.isEmpty()) {
             showOrderErrorPopup("Limit order must have a coin market value");
             return true;
         }
-
         return false;
     }
 
@@ -149,18 +144,28 @@ public class TraderActivity extends AppCompatActivity implements View.OnClickLis
                             BinanceApiClientFactory factory = BinanceApiClientFactory
                                     .newInstance(clientTokens.getKey(), clientTokens.getSecret());
                             BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-                            try {
-                                if (chosenOrderType.equals("Limit Buy") && !chosenClient.equals("All")) {
-                                    client.newOrder(limitBuy(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinMarketValue)
-                                            ,response -> System.out.println(response));
-                                }
-                                else if (chosenOrderType.equals("Limit Sell") && !chosenClient.equals("All")) {
-                                    client.newOrder(limitSell(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinMarketValue)
-                                            ,response -> System.out.println(response));
-                                }
+                            if (chosenOrderType.equals("Limit Buy") && !chosenClient.equals("All")) {
+                                client.newOrder(limitBuy(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinTargetPrice)
+                                        ,response -> System.out.println(response));
                             }
-                            catch (Exception e) {
-                                System.out.println("Limit order exception");
+                            else if (chosenOrderType.equals("Limit Sell") && !chosenClient.equals("All")) {
+                                System.out.println("stage 88888 " + chosenSymbol);
+                                client.newOrder(limitSell(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinTargetPrice)
+                                        ,new BinanceApiCallback<NewOrderResponse>() {
+                                            @Override
+                                            public void onResponse(NewOrderResponse newOrderResponse) {
+                                                System.out.println(newOrderResponse.getStatus());
+                                            }
+
+                                            @Override
+                                            public void onFailure(Throwable cause) {
+                                                try {
+                                                    throw cause;
+                                                } catch (Throwable throwable) {
+                                                    throwable.printStackTrace();
+                                                }
+                                            }
+                                        });
                             }
                         }
                     });
