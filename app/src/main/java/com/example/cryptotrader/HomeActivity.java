@@ -193,66 +193,66 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         textView.setAdapter(adapter);
         ArrayList<String> cname = new ArrayList<>();
         textView.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    cname.add(s.toString());
-                }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                cname.add(s.toString());
+            }
 
-                @Override
-                public void afterTextChanged(Editable s) {
+            @Override
+            public void afterTextChanged(Editable s) {
                 ctCredentials credentials = ctCredentialsArrayList.get(nList.indexOf(s.toString()));
                 BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(credentials.getKey(), credentials.getSecret());
                 BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-                    client.getAccount(new BinanceApiCallback<Account>() {
-                        @SuppressLint("SetTextI18n")
-                        @Override
-                        public void onResponse(Account account) {
-                            for(AssetBalance ass : account.getBalances()){
-                                String coin = ass.getAsset();
-                                BigDecimal biggy = new BigDecimal(0);
-                                switch (coin) {
-                                    case "BTC":
-                                        if (Double.parseDouble(ass.getFree()) > 0) {
-                                            biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
-                                                    .setScale(9, BigDecimal.ROUND_HALF_EVEN);
-                                        }
-                                        bit_value.setText("BTC:  " + biggy.toPlainString());
-                                        break;
-                                    case "ETH":
-                                        if (Double.parseDouble(ass.getFree()) > 0) {
-                                            biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
-                                                    .setScale(6, BigDecimal.ROUND_HALF_EVEN);
-                                        }
-                                        eth_value.setText("ETH:  " + biggy.toPlainString());
-                                        break;
-                                    case "ADA":
-                                        if (Double.parseDouble(ass.getFree()) > 0) {
-                                            biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
-                                                    .setScale(3, BigDecimal.ROUND_HALF_EVEN);
-                                        }
-                                        ada_value.setText("ADA:  " + biggy.toPlainString());
-                                        break;
-                                    case "BNB":
-                                        if (Double.parseDouble(ass.getFree()) > 0) {
-                                            biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
-                                                    .setScale(6, BigDecimal.ROUND_HALF_EVEN);
-                                        }
-                                        bnb_value.setText("BNB:  " + biggy.toPlainString());
-                                        break;
-                                    case "MANA":
-                                        if (Double.parseDouble(ass.getFree()) > 0) {
-                                            biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
-                                                    .setScale(3, BigDecimal.ROUND_HALF_EVEN);
-                                        }
-                                        mana_value.setText("MANA:  " + biggy.toPlainString());
-                                        break;
-                                }
+                client.getAccount(new BinanceApiCallback<Account>() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onResponse(Account account) {
+                        for(AssetBalance ass : account.getBalances()){
+                            String coin = ass.getAsset();
+                            BigDecimal biggy = new BigDecimal(0);
+                            switch (coin) {
+                                case "BTC":
+                                    if (Double.parseDouble(ass.getFree()) > 0) {
+                                        biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
+                                                .setScale(9, BigDecimal.ROUND_HALF_EVEN);
+                                    }
+                                    bit_value.setText("BTC:  " + biggy.toPlainString());
+                                    break;
+                                case "ETH":
+                                    if (Double.parseDouble(ass.getFree()) > 0) {
+                                        biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
+                                                .setScale(6, BigDecimal.ROUND_HALF_EVEN);
+                                    }
+                                    eth_value.setText("ETH:  " + biggy.toPlainString());
+                                    break;
+                                case "ADA":
+                                    if (Double.parseDouble(ass.getFree()) > 0) {
+                                        biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
+                                                .setScale(3, BigDecimal.ROUND_HALF_EVEN);
+                                    }
+                                    ada_value.setText("ADA:  " + biggy.toPlainString());
+                                    break;
+                                case "BNB":
+                                    if (Double.parseDouble(ass.getFree()) > 0) {
+                                        biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
+                                                .setScale(6, BigDecimal.ROUND_HALF_EVEN);
+                                    }
+                                    bnb_value.setText("BNB:  " + biggy.toPlainString());
+                                    break;
+                                case "MANA":
+                                    if (Double.parseDouble(ass.getFree()) > 0) {
+                                        biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
+                                                .setScale(3, BigDecimal.ROUND_HALF_EVEN);
+                                    }
+                                    mana_value.setText("MANA:  " + biggy.toPlainString());
+                                    break;
                             }
                         }
+                    }
                     @Override
                     public void onFailure(Throwable cause) {
                         try {
@@ -286,18 +286,22 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 String a_name = accountName.getText().toString().trim();
                 String key = keyInput.getText().toString().trim();
                 String secret = secretInput.getText().toString().trim();
-                boolean success = addUser(a_name,key,secret);
-                if(success){
-                    Toast.makeText(HomeActivity.this,
-                            "Account added successfully",
-                            Toast.LENGTH_LONG).show();
-                    myDialog.dismiss();
-
-                }
-                if (!success){
-                    Toast.makeText(HomeActivity.this, "Something went wrong. Please try again", Toast.LENGTH_LONG).show();
-                }
-
+                accounts_db.child(user.getUid()).child(a_name)
+                        .setValue(new ctCredentials(key,secret))
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(HomeActivity.this,
+                                            "Account added successfully",
+                                            Toast.LENGTH_LONG).show();
+                                    myDialog.dismiss();
+                                }
+                                else {
+                                    Toast.makeText(HomeActivity.this, "Something went wrong. Please try again", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
             }
         });
         TextView closePopupText = myDialog.findViewById(R.id.txtclose);
@@ -309,23 +313,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         });
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
-    }
-    private boolean addUser(String name,String key,String secret){
-        return addToDB(name,key,secret);
-    }
-    private boolean addToDB(String name,String key,String secret){
-        final boolean[] success = {false};
-        accounts_db.child(user.getUid()).child(name)
-                .setValue(new ctCredentials(key,secret))
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            success[0] = true;
-                        }
-                    }
-                });
-        return success[0];
     }
 
     void showPopupTradeChooser(View view) {
