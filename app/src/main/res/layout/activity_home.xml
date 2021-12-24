@@ -5,7 +5,16 @@
     android:background="@drawable/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProfileActivity">
+    tools:context=".ProfileActivity"
+    android:fitsSystemWindows="true">
+
+<!--    <com.google.android.material.navigation.NavigationView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/nav_view"-->
+<!--        app:headerLayout="@layout/header"-->
+<!--        app:menu="@menu/main_menu"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/banner"/>-->
 
     <TextView
         android:id="@+id/banner"
