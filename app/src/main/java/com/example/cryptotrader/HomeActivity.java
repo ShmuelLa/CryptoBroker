@@ -45,7 +45,8 @@ import java.util.TreeMap;
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
 
     private ImageButton wallet, chart, add, profile;
-    private Button addButton, mainTraderButton, cancelTradeButton,bit_value,eth_value,ada_value,mana_value,bnb_value;
+    private Button addButton, limitOrderButton, cancelTradeButton, simpleOrderButton,
+            btcVal, ethVal, adaVal, manaVal, bnbVal;
     private Dialog myDialog;
     private EditText accountName, keyInput, secretInput;
     private DatabaseReference accounts_db;
@@ -172,11 +173,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         ArrayList<String> nList = new ArrayList<>();
         ArrayList<ctCredentials> ctCredentialsArrayList = new ArrayList<>();
         myDialog.setContentView(R.layout.popup_mywallets);
-        bit_value = myDialog.findViewById(R.id.bit_value);
-        eth_value = myDialog.findViewById(R.id.eth_value);
-        ada_value = myDialog.findViewById(R.id.ada_value);
-        bnb_value = myDialog.findViewById(R.id.bnb_value);
-        mana_value = myDialog.findViewById(R.id.mana_value);
+        btcVal = myDialog.findViewById(R.id.bit_value);
+        ethVal = myDialog.findViewById(R.id.eth_value);
+        adaVal = myDialog.findViewById(R.id.ada_value);
+        bnbVal = myDialog.findViewById(R.id.bnb_value);
+        manaVal = myDialog.findViewById(R.id.mana_value);
         accounts_db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -219,35 +220,35 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                         biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
                                                 .setScale(9, BigDecimal.ROUND_HALF_EVEN);
                                     }
-                                    bit_value.setText("BTC:  " + biggy.toPlainString());
+                                    btcVal.setText("BTC:  " + biggy.toPlainString());
                                     break;
                                 case "ETH":
                                     if (Double.parseDouble(ass.getFree()) > 0) {
                                         biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
                                                 .setScale(6, BigDecimal.ROUND_HALF_EVEN);
                                     }
-                                    eth_value.setText("ETH:  " + biggy.toPlainString());
+                                    ethVal.setText("ETH:  " + biggy.toPlainString());
                                     break;
                                 case "ADA":
                                     if (Double.parseDouble(ass.getFree()) > 0) {
                                         biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
                                                 .setScale(3, BigDecimal.ROUND_HALF_EVEN);
                                     }
-                                    ada_value.setText("ADA:  " + biggy.toPlainString());
+                                    adaVal.setText("ADA:  " + biggy.toPlainString());
                                     break;
                                 case "BNB":
                                     if (Double.parseDouble(ass.getFree()) > 0) {
                                         biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
                                                 .setScale(6, BigDecimal.ROUND_HALF_EVEN);
                                     }
-                                    bnb_value.setText("BNB:  " + biggy.toPlainString());
+                                    bnbVal.setText("BNB:  " + biggy.toPlainString());
                                     break;
                                 case "MANA":
                                     if (Double.parseDouble(ass.getFree()) > 0) {
                                         biggy = new BigDecimal(Double.parseDouble(ass.getFree()))
                                                 .setScale(3, BigDecimal.ROUND_HALF_EVEN);
                                     }
-                                    mana_value.setText("MANA:  " + biggy.toPlainString());
+                                    manaVal.setText("MANA:  " + biggy.toPlainString());
                                     break;
                             }
                         }
@@ -317,11 +318,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     void showPopupTradeChooser(View view) {
         myDialog.setContentView(R.layout.popup_trader_chooser);
         TextView closePopupText = myDialog.findViewById(R.id.txtclose);
-        mainTraderButton = myDialog.findViewById(R.id.mainTraderButton);
-        mainTraderButton.setOnClickListener(new View.OnClickListener() {
+        simpleOrderButton = myDialog.findViewById(R.id.simpleOrderButton);
+        limitOrderButton = myDialog.findViewById(R.id.limitOrderButton);
+        limitOrderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(HomeActivity.this, LimitTraderActivity.class));
+            }
+        });
+        simpleOrderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(HomeActivity.this, TraderMarketOrderActivity.class));
             }
         });
         cancelTradeButton = myDialog.findViewById(R.id.cancelTradeButton);

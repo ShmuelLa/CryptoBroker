@@ -1,7 +1,7 @@
 package com.example.cryptotrader;
 
-import static com.binance.api.client.domain.account.NewOrder.limitBuy;
-import static com.binance.api.client.domain.account.NewOrder.limitSell;
+import static com.binance.api.client.domain.account.NewOrder.marketBuy;
+import static com.binance.api.client.domain.account.NewOrder.marketSell;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,16 +14,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.binance.api.client.BinanceApiAsyncRestClient;
 import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiClientFactory;
-import com.binance.api.client.domain.TimeInForce;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,17 +30,17 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
-public class LimitTraderActivity extends AppCompatActivity implements View.OnClickListener {
+public class TraderMarketOrderActivity extends AppCompatActivity implements View.OnClickListener{
     private DatabaseReference accountsDB;
     private FirebaseUser user;
     private Button sendOrderButton;
     private ImageView popupImage;
-    private TextView fundText, priceText, inputMessage, popupTopic;
-    private final String[] tradeOptions = {"Limit Buy", "Limit Sell", "Futures Buy", "Futures Sell"};
+    private TextView fundText, inputMessage, popupTopic;
+    private final String[] tradeOptions = {"Buy", "Sell"};
     private final String[] symbolFundOptions = {"USDT", "BUSD", "BNB"};
     private final String[] symbolTargetOptions = {"BTC", "ETH", "ADA", "MANA", "BNB"};
     private Spinner clientSpinner;
@@ -56,16 +53,13 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
     private String chosenFundCoin;
     private String chosenTargetCoin;
     private String chosenCoinAmount;
-    private String chosenCoinTargetPrice;
-    private ProgressBar progressBar;
-    private ImageButton profileButton;
     private Dialog myDialog;
     ArrayList<String> clientsList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_trader);
+        setContentView(R.layout.activity_trader_buy);
         sendOrderButton = findViewById(R.id.initiateOrderButton);
         user = FirebaseAuth.getInstance().getCurrentUser();
         accountsDB = FirebaseDatabase.getInstance().getReference("Accounts");
@@ -87,7 +81,6 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
         symbolFundSpinner.setAdapter(symbolFundsAdapter);
         symbolTargetSpinner.setAdapter(symbolTargetAdapter);
         fundText = findViewById(R.id.fundsAmountText);
-        priceText = findViewById(R.id.marketPriceText);
         myDialog = new Dialog(this);
         sendOrderButton.setOnClickListener(this);
     }
@@ -100,7 +93,6 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
             chosenFundCoin = ctUtils.getSpinnerChosenText(symbolFundSpinner);
             chosenTargetCoin = ctUtils.getSpinnerChosenText(symbolTargetSpinner);
             chosenCoinAmount = fundText.getText().toString();
-            chosenCoinTargetPrice = priceText.getText().toString();
             chosenSymbol = chosenTargetCoin + chosenFundCoin;
             if (checkOrderValidity()) return;
             if (chosenOrderType.equals("Limit Buy") || chosenOrderType.equals("Limit Sell")) {
@@ -124,12 +116,6 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
             showOrderPopup("Error", "Any order must have a coin amount (isEmpty)");
             return true;
         }
-        else if ((chosenOrderType.equals("Limit Buy") || chosenOrderType.equals("Limit Sell"))
-                && (chosenCoinTargetPrice == null || Integer.parseInt(chosenCoinTargetPrice) == 0
-                || Float.parseFloat(chosenCoinTargetPrice) == 0) || chosenCoinTargetPrice.isEmpty()) {
-            showOrderPopup("Error", "Limit order must have a coin market value");
-            return true;
-        }
         return false;
     }
 
@@ -151,12 +137,12 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
                             BinanceApiClientFactory factory = BinanceApiClientFactory
                                     .newInstance(clientTokens.getKey(), clientTokens.getSecret());
                             BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-                            if (chosenOrderType.equals("Limit Buy")) {
-                                client.newOrder(limitBuy(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinTargetPrice)
+                            if (chosenOrderType.equals("Buy")) {
+                                client.newOrder(marketBuy(chosenSymbol, chosenCoinAmount)
                                         , createOrderCallback());
                             }
-                            else if (chosenOrderType.equals("Limit Sell")) {
-                                client.newOrder(limitSell(chosenSymbol, TimeInForce.GTC, chosenCoinAmount, chosenCoinTargetPrice)
+                            else if (chosenOrderType.equals("Sell")) {
+                                client.newOrder(marketSell(chosenSymbol, chosenCoinAmount)
                                         , createOrderCallback());
                             }
                         }
@@ -164,18 +150,12 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
                             BinanceApiClientFactory factory = BinanceApiClientFactory
                                     .newInstance(clientTokens.getKey(), clientTokens.getSecret());
                             BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-                            if (chosenOrderType.equals("Limit Buy")) {
-                                client.newOrder(limitBuy(chosenSymbol
-                                        , TimeInForce.GTC
-                                        , chosenCoinAmount
-                                        , chosenCoinTargetPrice)
+                            if (chosenOrderType.equals("Buy")) {
+                                client.newOrder(marketBuy(chosenSymbol, chosenCoinAmount)
                                         , createOrderCallback());
                             }
-                            else if (chosenOrderType.equals("Limit Sell")) {
-                                client.newOrder(limitSell(chosenSymbol
-                                        , TimeInForce.GTC
-                                        , chosenCoinAmount
-                                        , chosenCoinTargetPrice)
+                            else if (chosenOrderType.equals("Sell")) {
+                                client.newOrder(marketSell(chosenSymbol, chosenCoinAmount)
                                         , createOrderCallback());
                             }
                         }
