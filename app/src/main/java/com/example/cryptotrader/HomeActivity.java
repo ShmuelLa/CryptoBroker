@@ -38,7 +38,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -322,7 +321,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mainTraderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(HomeActivity.this, TraderActivity.class));
+                startActivity(new Intent(HomeActivity.this, LimitTraderActivity.class));
             }
         });
         cancelTradeButton = myDialog.findViewById(R.id.cancelTradeButton);

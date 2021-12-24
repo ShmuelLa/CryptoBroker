@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class TraderActivity extends AppCompatActivity implements View.OnClickListener {
+public class LimitTraderActivity extends AppCompatActivity implements View.OnClickListener {
     private DatabaseReference accountsDB;
     private FirebaseUser user;
     private Button sendOrderButton;

@@ -86,7 +86,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 showpop(view);
                 break;
             case R.id.tradebutton:
-                startActivity(new Intent(this, TraderActivity.class));
+                startActivity(new Intent(this, LimitTraderActivity.class));
                 break;
         }
     }

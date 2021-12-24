@@ -5,7 +5,7 @@
     android:background="@drawable/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TraderActivity">
+    tools:context=".LimitTraderActivity">
 
     <ImageButton
         android:id="@+id/profile"
