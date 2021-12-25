@@ -13,6 +13,7 @@ import com.binance.api.client.BinanceApiRestClient;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+
     Button register, login;
     ProgressBar progressBar;
 

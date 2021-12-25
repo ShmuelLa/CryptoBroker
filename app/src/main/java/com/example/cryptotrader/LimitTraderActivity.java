@@ -2,12 +2,16 @@ package com.example.cryptotrader;
 
 import static com.binance.api.client.domain.account.NewOrder.limitBuy;
 import static com.binance.api.client.domain.account.NewOrder.limitSell;
+import static com.example.cryptotrader.App.CHANNEL_1_ID;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.Notification;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -40,6 +44,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class LimitTraderActivity extends AppCompatActivity implements View.OnClickListener {
+    private NotificationManagerCompat notificationManager;
     private DatabaseReference accountsDB;
     private FirebaseUser user;
     private Button sendOrderButton;
@@ -68,6 +73,7 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trader);
+        notificationManager = NotificationManagerCompat.from(this);
         sendOrderButton = findViewById(R.id.initiateOrderButton);
         user = FirebaseAuth.getInstance().getCurrentUser();
         accountsDB = FirebaseDatabase.getInstance().getReference("Accounts");
@@ -201,6 +207,16 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
                 showOrderPopup("Success"
                         , "Order: \n " + newOrderResponse.getOrderId() + "\n"
                                 + newOrderResponse.getSymbol() + "\nCreated");
+                Notification notification = new NotificationCompat.Builder(LimitTraderActivity.this, CHANNEL_1_ID)
+                        .setSmallIcon(R.drawable.notification_icon)
+                        .setContentTitle("Order Sent!")
+                        .setContentText("Order: \n " + newOrderResponse.getOrderId() + "\n"
+                                + newOrderResponse.getSymbol() + "\nCreated")
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setCategory(NotificationCompat.CATEGORY_EVENT)
+                        .build();
+
+                notificationManager.notify(1, notification);
             }
             @Override
             public void onFailure(Throwable cause) {

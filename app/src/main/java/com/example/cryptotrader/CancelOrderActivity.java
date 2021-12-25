@@ -1,9 +1,14 @@
 package com.example.cryptotrader;
 
+import static com.example.cryptotrader.App.CHANNEL_1_ID;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import android.app.Dialog;
+import android.app.Notification;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -43,6 +48,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class CancelOrderActivity extends AppCompatActivity {
+    private NotificationManagerCompat notificationManager;
     private DatabaseReference accountsDB;
     private FirebaseUser user;
     private Button cancelOrderButton, emergencyButton;
@@ -59,6 +65,7 @@ public class CancelOrderActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        notificationManager = NotificationManagerCompat.from(this);
         setContentView(R.layout.activity_cancel_order);
         clientSpinner = findViewById(R.id.clientSpinner);
         openOrdersSpinner = findViewById(R.id.openOrdersSpinner);
@@ -128,6 +135,16 @@ public class CancelOrderActivity extends AppCompatActivity {
                                                                 showOrderPopup("Success"
                                                                         , "Order: \n " + cancelOrderResponse.getOrderId() + "\n"
                                                                                 + cancelOrderResponse.getSymbol() + "\nCancelled");
+                                                                Notification notification = new NotificationCompat.Builder(CancelOrderActivity.this, CHANNEL_1_ID)
+                                                                        .setSmallIcon(R.drawable.notification_icon)
+                                                                        .setContentTitle("Order Sent!")
+                                                                        .setContentText("Order: \n " + cancelOrderResponse.getOrderId() + "\n"
+                                                                                + cancelOrderResponse.getSymbol() + "\nCancelled")
+                                                                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                                                        .setCategory(NotificationCompat.CATEGORY_EVENT)
+                                                                        .build();
+
+                                                                notificationManager.notify(1, notification);
                                                             }
 
                                                             @Override
