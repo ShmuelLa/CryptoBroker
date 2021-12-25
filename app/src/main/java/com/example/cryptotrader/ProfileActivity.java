@@ -3,6 +3,8 @@ package com.example.cryptotrader;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.view.Gravity;
+import android.view.Window;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.app.Dialog;
@@ -32,7 +34,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private ImageButton wallet;
     private ImageButton chart;
     private ImageButton add;
-    private Dialog mydialog;
+    private Dialog myDialog;
     private ProgressBar progressBar;
 
     @Override
@@ -48,7 +50,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         wallet.setOnClickListener(this);
         chart.setOnClickListener(this);
         add.setOnClickListener(this);
-        mydialog = new Dialog(this);
+        myDialog = new Dialog(this);
         setContentView(R.layout.activity_profile);
         tradeButton = findViewById(R.id.tradebutton);
         tradeButton.setOnClickListener(this);
@@ -91,19 +93,20 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
     private void showpop(View view){
-        mydialog.setContentView(R.layout.popup_add);
-        TextView close_pop = mydialog.findViewById(R.id.txtclose);
+        myDialog.setContentView(R.layout.popup_add);
+        Window window = myDialog.getWindow();
+        window.setGravity(Gravity.CENTER);
+        window.getAttributes().windowAnimations = R.style.DialogAnimator;
+        TextView close_pop = myDialog.findViewById(R.id.txtclose);
         close_pop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mydialog.dismiss();
+                myDialog.dismiss();
             }
         });
-        mydialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        mydialog.show();
+        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        myDialog.show();
         String given_key =  findViewById(R.id.key_input).toString().trim();
         String given_secret = findViewById(R.id.secret_input).toString().trim();
-
-
     }
 }

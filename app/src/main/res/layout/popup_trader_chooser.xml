@@ -45,7 +45,7 @@
         android:layout_width="231dp"
         android:layout_height="59dp"
         android:gravity="center"
-        android:text="new Buy/Sell order"
+        android:text="new market order"
         app:layout_constraintBottom_toTopOf="@+id/limitOrderButton"
         app:layout_constraintTop_toBottomOf="@+id/popupTopic"
         app:layout_constraintEnd_toEndOf="parent"

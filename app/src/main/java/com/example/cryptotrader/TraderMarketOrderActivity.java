@@ -11,7 +11,9 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -202,6 +204,9 @@ public class TraderMarketOrderActivity extends AppCompatActivity implements View
      */
     void showOrderPopup(String topic, String msg) {
         myDialog.setContentView(R.layout.popup_invalid_order_warning);
+        Window window = myDialog.getWindow();
+        window.setGravity(Gravity.CENTER);
+        window.getAttributes().windowAnimations = R.style.DialogAnimator;
         inputMessage = myDialog.findViewById(R.id.orderInputErrorText);
         popupTopic = myDialog.findViewById(R.id.orderInputTopic);
         popupImage = myDialog.findViewById(R.id.orderPopupImage);

@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -317,6 +319,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     void showPopupTradeChooser(View view) {
         myDialog.setContentView(R.layout.popup_trader_chooser);
+        Window window = myDialog.getWindow();
+        window.setGravity(Gravity.CENTER);
+        window.getAttributes().windowAnimations = R.style.DialogAnimator;
         TextView closePopupText = myDialog.findViewById(R.id.txtclose);
         simpleOrderButton = myDialog.findViewById(R.id.simpleOrderButton);
         limitOrderButton = myDialog.findViewById(R.id.limitOrderButton);
