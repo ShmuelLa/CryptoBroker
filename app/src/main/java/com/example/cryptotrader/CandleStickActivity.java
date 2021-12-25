@@ -1,59 +1,66 @@
 package com.example.cryptotrader;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.loader.content.AsyncTaskLoader;
 
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import com.binance.api.client.BinanceApiAsyncRestClient;
-import com.binance.api.client.BinanceApiCallback;
-import com.binance.api.client.BinanceApiClientFactory;
-import com.binance.api.client.BinanceApiRestClient;
-import com.binance.api.client.BinanceApiWebSocketClient;
-import com.binance.api.client.domain.market.Candlestick;
-import com.binance.api.client.domain.market.CandlestickInterval;
-
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.litesoftwares.coingecko.CoinGeckoApiClient;
-import com.litesoftwares.coingecko.constant.Currency;
-import com.litesoftwares.coingecko.domain.Coins.CoinData.DeveloperData;
-import com.litesoftwares.coingecko.domain.Coins.CoinData.IcoData;
-import com.litesoftwares.coingecko.domain.Coins.CoinFullData;
-import com.litesoftwares.coingecko.domain.Coins.CoinList;
-import com.litesoftwares.coingecko.domain.Coins.CoinMarkets;
-import com.litesoftwares.coingecko.domain.Coins.CoinTickerById;
 import com.litesoftwares.coingecko.domain.Coins.MarketChart;
 import com.litesoftwares.coingecko.impl.CoinGeckoApiClientImpl;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.Executor;
 
 public class CandleStickActivity extends AppCompatActivity {
-
+    private ArrayList<BarEntry> chartEntries;
+    private MarketChart resultMarketChart;
+    BarChart barChart;
+    BarDataSet barDataSet;
+    private int chartCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_candel_stick);
-        new CandleStickTask().execute();
+        chartEntries = new ArrayList<>();
+        barChart = findViewById(R.id.barChart);
+        new barChartTask().execute();
+        barChart.animateY(2000);
     }
 
-    private static class CandleStickTask extends AsyncTask<String, Void, String> {
+    private class barChartTask extends AsyncTask {
+
+        private barChartTask() {
+        }
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected Object doInBackground(Object[] objects) {
             CoinGeckoApiClient client = new CoinGeckoApiClientImpl();
-            MarketChart marketchart = client.getCoinMarketChartById("bitcoin","usd",1);
-            System.out.println(marketchart.toString());
+            resultMarketChart = client.getCoinMarketChartById("bitcoin","usd",1);
+            System.out.println(resultMarketChart.getPrices());
+            for (List<String> list : resultMarketChart.getPrices()) {
+                BarEntry tempEntry = new BarEntry(chartCounter, Float.parseFloat(list.get(1)));
+                chartCounter++;
+                System.out.println(tempEntry.toString());
+                chartEntries.add(tempEntry);
+            }
+            barDataSet = new BarDataSet(chartEntries, "Price");
+            barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+            barDataSet.setValueTextColor(Color.BLACK);
+            barDataSet.setValueTextSize(16f);
             client.shutdown();
+            BarData barData = new BarData(barDataSet);
+            barChart.setFitBars(true);
+            barChart.setData(barData);
+            barChart.getDescription().setText("bitcoin daily zibi");
             return null;
         }
     }
-
-
-
 }
