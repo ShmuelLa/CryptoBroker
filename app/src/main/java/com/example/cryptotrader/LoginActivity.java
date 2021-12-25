@@ -73,7 +73,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     while(true){
                         int time =300000;
                         if( ! flag ) {time = 60000;flag = true;}
-                        System.out.println(time+"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@22");
                         Thread.sleep(time);
                         int coinIndex =(int)(Math.random()*5);
                         int action =(int)(Math.random());
