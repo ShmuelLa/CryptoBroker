@@ -1,8 +1,16 @@
 package com.example.cryptotrader;
 
+import static com.example.cryptotrader.App.CHANNEL_1_ID;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
+import android.app.Activity;
+import android.app.Notification;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -17,17 +25,34 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.litesoftwares.coingecko.CoinGeckoApiClient;
+import com.litesoftwares.coingecko.constant.Currency;
+import com.litesoftwares.coingecko.domain.Coins.CoinData.DeveloperData;
+import com.litesoftwares.coingecko.domain.Coins.CoinData.IcoData;
+import com.litesoftwares.coingecko.domain.Coins.CoinFullData;
+import com.litesoftwares.coingecko.domain.Coins.CoinList;
+import com.litesoftwares.coingecko.domain.Coins.CoinMarkets;
+import com.litesoftwares.coingecko.domain.Coins.CoinTickerById;
+import com.litesoftwares.coingecko.impl.CoinGeckoApiClientImpl;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText editTextEmail, editTextPassword;
     private TextView register, forgotPassword;
     private Button login;
+    private NotificationManagerCompat notificationManager;
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        notificationManager = NotificationManagerCompat.from(this);
         setContentView(R.layout.activity_login);
         editTextEmail = findViewById(R.id.email);
         editTextPassword = findViewById(R.id.password);
@@ -35,12 +60,50 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         forgotPassword.setOnClickListener(this);
         register = findViewById(R.id.register);
         register.setOnClickListener(this);
+        boolean flag = false;
         login = findViewById(R.id.loginButton);
         login.setOnClickListener(this);
         progressBar = findViewById(R.id.progressBar);
         mAuth = FirebaseAuth.getInstance();
-    }
+        new Thread(new Runnable() {
+            boolean flag = false;
+            @Override
+            public void run() {
+                try {
+                    while(true){
+                        int time =300000;
+                        if( ! flag ) {time = 60000;flag = true;}
+                        System.out.println(time+"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@22");
+                        Thread.sleep(time);
+                        int coinIndex =(int)(Math.random()*5);
+                        int action =(int)(Math.random());
+                        int titleIndex = (int)(Math.random()*3);
+                        CoinGeckoApiClient client = new CoinGeckoApiClientImpl();
+                        String[] coinNames= {"bitcoin", "ethereum", "cardano", "decentraland", "binancecoin"};
+                        String[] title = {"Have you noticed?","Hold on and look!","Maybe you didn't know but..","We just found out that..."};
+                        String[] actions= {"buying?","selling?"};
+                        String coin = coinNames[coinIndex];
+                        Map<String, Map<String, Double>> coinPrices = client.getPrice(coin,Currency.USD);
+                        double price= coinPrices.get(coin).get(Currency.USD);
+                        Notification notification = new NotificationCompat.Builder(LoginActivity.this, CHANNEL_1_ID)
+                                .setSmallIcon(R.drawable.notification_icon)
+                                .setContentTitle(title[titleIndex])
+                                .setContentText(coinNames[coinIndex]+" value is " +price+" please consider "+actions[action])
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                .setCategory(NotificationCompat.CATEGORY_EVENT)
+                                .build();
+                        notificationManager.notify(1, notification);
 
+                    }
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+
+    }
     @Override
     public void onClick(View view) {
         switch (view.getId()){

@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -36,6 +37,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
+import com.litesoftwares.coingecko.CoinGeckoApiClient;
+import com.litesoftwares.coingecko.impl.CoinGeckoApiClientImpl;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,6 +76,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         user = FirebaseAuth.getInstance().getCurrentUser();
         accounts_db = FirebaseDatabase.getInstance().getReference("Accounts");
         progressBar = findViewById(R.id.progressBar);
+
+
     }
 
     @Override
