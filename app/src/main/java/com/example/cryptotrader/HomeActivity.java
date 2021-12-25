@@ -77,7 +77,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         preview = findViewById(R.id.preveiw);
         preview.setMovementMethod(new ScrollingMovementMethod());
         TreeMap<String,String> prices = new TreeMap<>();
-        TreeMap<String,String> cAmounts = new TreeMap<>();
         ArrayList<String> text_preveiw = new ArrayList<>();
         text_preveiw.add("Accounts balances:\n");
         currencies= Arrays.asList("BTC","ETH","ADA","BNB","MANA","USDT");
@@ -95,6 +94,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         client.getAccount(new BinanceApiCallback<Account>() {
                             @Override
                             public void onResponse(Account account) {
+                                TreeMap<String,String> cAmounts=  new TreeMap<>();
                                 for(AssetBalance ass : account.getBalances()){
                                     String coin = ass.getAsset();
                                     if(currencies.contains(coin)){
