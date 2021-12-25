@@ -19,24 +19,29 @@
         app:layout_constraintRight_toRightOf="parent" />
 
     <Spinner
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:id="@+id/clientSpinner"
         android:layout_width="match_parent"
         android:layout_height="54dp"
         android:background="@android:drawable/btn_dropdown"
-        android:backgroundTint="#50ffffff"
+        android:backgroundTint="#90ffffff"
         android:spinnerMode="dialog"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.116" />
 
     <Spinner
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:id="@+id/openOrdersSpinner"
         android:layout_width="match_parent"
         android:layout_height="54dp"
         android:background="@android:drawable/btn_dropdown"
         android:spinnerMode="dialog"
-        android:backgroundTint="#50ffffff"
+        android:backgroundTint="#90ffffff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/clientSpinner"
@@ -64,7 +69,8 @@
         android:backgroundTint="@color/red"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sendCancelOderButton" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="30dp"/>
 
     <ProgressBar
         android:id="@+id/progressBar"

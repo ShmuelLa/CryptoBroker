@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -38,6 +39,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         switch (view.getId()){
             case R.id.forgotButton:
                 resetPassword();
+                startActivity(new Intent(this, LoginActivity.class));
                 break;
         }
     }
