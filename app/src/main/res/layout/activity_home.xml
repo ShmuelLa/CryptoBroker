@@ -8,13 +8,6 @@
     tools:context=".ProfileActivity"
     android:fitsSystemWindows="true">
 
-<!--    <com.google.android.material.navigation.NavigationView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:id="@+id/nav_view"-->
-<!--        app:headerLayout="@layout/header"-->
-<!--        app:menu="@menu/main_menu"-->
-<!--        app:layout_constraintEnd_toStartOf="@+id/banner"/>-->
 
     <TextView
         android:id="@+id/banner"
@@ -51,6 +44,7 @@
         android:id="@+id/testButtonChart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="72dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/preveiw"
         app:layout_constraintEnd_toEndOf="parent"
@@ -127,28 +121,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         />
-
-
-    <TextView
-        android:id="@+id/preveiw"
-        android:layout_width="373dp"
-        android:layout_height="330dp"
-        android:background="#50ffffff"
-        android:scrollbarSize="3dp"
-        android:scrollbarStyle="outsideOverlay"
-        android:scrollbarThumbVertical="@color/white"
-        android:scrollbars="vertical"
-        android:text="loading . . ."
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.578"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bannerDescription"
-        app:layout_constraintVertical_bias="0.506"
-        tools:ignore="MissingConstraints" />
 
     <ProgressBar
         android:id="@+id/progressBar"

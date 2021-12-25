@@ -53,9 +53,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private EditText accountName, keyInput, secretInput;
     private DatabaseReference accounts_db;
     private FirebaseUser user;
-    private TextView preview;
     private ProgressBar progressBar;
-    List<String> currencies;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,83 +72,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         user = FirebaseAuth.getInstance().getCurrentUser();
         accounts_db = FirebaseDatabase.getInstance().getReference("Accounts");
         progressBar = findViewById(R.id.progressBar);
-        preview = findViewById(R.id.preveiw);
-        preview.setMovementMethod(new ScrollingMovementMethod());
-        TreeMap<String,String> prices = new TreeMap<>();
-        ArrayList<String> text_preveiw = new ArrayList<>();
-        text_preveiw.add("Accounts balances:\n");
-        currencies= Arrays.asList("BTC","ETH","ADA","BNB","MANA","USDT");
-        accounts_db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if(task.isSuccessful()){
-                    GenericTypeIndicator<HashMap<String, ctCredentials>> gType = new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
-                    HashMap<String, ctCredentials> map = task.getResult().getValue(gType);
-//                    for(String clientName : map.keySet()){
-                    map.forEach((clientName, credentials) ->{
-                        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(credentials.getKey(), credentials.getSecret());
-                        BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
-                        client.getAccount(new BinanceApiCallback<Account>() {
-                            @Override
-                            public void onResponse(Account account) {
-                                TreeMap<String,String> cAmounts=  new TreeMap<>();
-                                for(AssetBalance ass : account.getBalances()){
-                                    String coin = ass.getAsset();
-                                    if(currencies.contains(coin)){
-                                        cAmounts.put(coin,ass.getFree());
-                                    }
-                                }
-                                client.getAllPrices(new BinanceApiCallback<List<TickerPrice>>() {
-                                    @Override
-                                    public void onResponse(List<TickerPrice> tickerPrices) {
-                                        double sum = 0;
-                                        text_preveiw.add(clientName);
-                                        text_preveiw.add("Total Free in USDT: ");
-                                        sum+= Double.parseDouble(cAmounts.get("USDT"));
-                                        for(TickerPrice tp : tickerPrices){
-                                            String symbol = tp.getSymbol();
-                                            if(symbol.contains("USDT")){
-                                                String cName = symbol.replaceAll("USDT","");
-                                                if(currencies.contains(cName)) {
-                                                    double price = Double.parseDouble(tp.getPrice());
-                                                    double amount = Double.parseDouble(cAmounts.get(cName));
-                                                    sum += (price * amount);
-                                                }
-                                            }
-                                        }
-                                        text_preveiw.add(Double.toString(sum));
-                                        text_preveiw.add("\n");
-                                        StringBuilder ptxt = new StringBuilder();
-                                        text_preveiw.forEach((t) ->{ptxt.append(t).append("\n");});
-                                        preview.setText(ptxt);
-                                    }
-                                    @Override
-                                    public void onFailure(Throwable cause) {
-                                        try {
-                                            throw cause;
-                                        } catch (Throwable throwable) {
-                                            throwable.printStackTrace();
-                                        }
-                                    }
-                                });
-                            }
-                            @Override
-                            public void onFailure(Throwable cause) {
-                                try {
-                                    throw cause;
-                                } catch (Throwable throwable) {
-                                    throwable.printStackTrace();
-                                }
-                            }
-                        });
-                    });
-                }else{
-                    preview.setText("Please add wallets to your account.\n You can do so at the Add button in the middle of the taskbar.");
-                }
-            }
-
-        });
     }
 
     @Override

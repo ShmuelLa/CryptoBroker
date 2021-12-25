@@ -3,6 +3,8 @@ package com.example.cryptotrader;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
 import android.view.Window;
 import android.widget.ProgressBar;
@@ -17,96 +19,131 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.binance.api.client.BinanceApiAsyncRestClient;
+import com.binance.api.client.BinanceApiCallback;
+import com.binance.api.client.BinanceApiClientFactory;
+import com.binance.api.client.domain.account.Account;
+import com.binance.api.client.domain.account.AssetBalance;
+import com.binance.api.client.domain.market.TickerPrice;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.TreeMap;
+
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener{
-    private Button logOut, tradeButton;
-    private FirebaseUser user;
-    private DatabaseReference ref;
-    private TextView email;
-    private String userId;
-    private ImageButton wallet;
-    private ImageButton chart;
-    private ImageButton add;
-    private Dialog myDialog;
+    private Button logOut;
     private ProgressBar progressBar;
+    private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        ref = FirebaseDatabase.getInstance().getReference("Users");
-        userId = user.getUid();
-        add = findViewById(R.id.add);
-        wallet = findViewById(R.id.wallet);
-        chart = findViewById(R.id.chart);
-        wallet.setOnClickListener(this);
-        chart.setOnClickListener(this);
-        add.setOnClickListener(this);
-        myDialog = new Dialog(this);
         setContentView(R.layout.activity_profile);
-        tradeButton = findViewById(R.id.tradebutton);
-        tradeButton.setOnClickListener(this);
+        logOut = findViewById(R.id.logOut);
         progressBar = findViewById(R.id.progressBar);
-        ref.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+        logOut.setOnClickListener(this);
+        textView = findViewById(R.id.preveiw);
+        DatabaseReference accounts_db = FirebaseDatabase.getInstance().getReference("Accounts");
+        progressBar = findViewById(R.id.progressBar);
+        textView.setMovementMethod(new ScrollingMovementMethod());
+        TreeMap<String,String> prices = new TreeMap<>();
+        ArrayList<String> text_preveiw = new ArrayList<>();
+        text_preveiw.add("Accounts balances:\n");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        List currencies= Arrays.asList("BTC","ETH","ADA","BNB","MANA","USDT");
+        accounts_db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @SuppressLint("SetTextI18n")
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ctUser userProfile = snapshot.getValue(ctUser.class);
-                if(userProfile != null){
-//                    String emailStr = userProfile.email;
-//                    email.setText(emailStr);
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()){
+                    GenericTypeIndicator<HashMap<String, ctCredentials>> gType = new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
+                    HashMap<String, ctCredentials> map = task.getResult().getValue(gType);
+                    map.forEach((clientName, credentials) ->{
+                        BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(credentials.getKey(), credentials.getSecret());
+                        BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
+                        client.getAccount(new BinanceApiCallback<Account>() {
+                            @Override
+                            public void onResponse(Account account) {
+                                TreeMap<String,String> cAmounts=  new TreeMap<>();
+                                for(AssetBalance ass : account.getBalances()){
+                                    String coin = ass.getAsset();
+                                    if(currencies.contains(coin)){
+                                        cAmounts.put(coin,ass.getFree());
+                                    }
+                                }
+                                client.getAllPrices(new BinanceApiCallback<List<TickerPrice>>() {
+                                    @Override
+                                    public void onResponse(List<TickerPrice> tickerPrices) {
+                                        double sum = 0;
+                                        text_preveiw.add(clientName);
+                                        text_preveiw.add("Total Amount of assets in Usd: ");
+                                        for(TickerPrice tp : tickerPrices){
+                                            String symbol = tp.getSymbol();
+                                            if(symbol.contains("USDT")){
+                                                String cName = symbol.replaceAll("USDT","");
+                                                if(currencies.contains(cName)) {
+                                                    double price = Double.parseDouble(tp.getPrice());
+                                                    double amount = Double.parseDouble(cAmounts.get(cName));
+                                                    sum += (price * amount);
+                                                }
+                                            }
+                                        }
+                                        text_preveiw.add(Double.toString(sum));
+                                        text_preveiw.add("Total free USDT:");
+                                        text_preveiw.add(cAmounts.get("USDT"));
+                                        text_preveiw.add("\n");
+                                        StringBuilder ptxt = new StringBuilder();
+                                        text_preveiw.forEach((t) ->{ptxt.append(t).append("\n");});
+                                        textView.setText(ptxt);
+                                    }
+                                    @Override
+                                    public void onFailure(Throwable cause) {
+                                        try {
+                                            throw cause;
+                                        } catch (Throwable throwable) {
+                                            throwable.printStackTrace();
+                                        }
+                                    }
+                                });
+                            }
+                            @Override
+                            public void onFailure(Throwable cause) {
+                                try {
+                                    throw cause;
+                                } catch (Throwable throwable) {
+                                    throwable.printStackTrace();
+                                }
+                            }
+                        });
+                    });
+                }else{
+                    textView.setText("Please add wallets to your account.\n You can do so at the Add button in the middle of the taskbar.");
                 }
             }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(ProfileActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
-            }
         });
-//        logOut.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.logOut:
-//                FirebaseAuth.getInstance().signOut();
-//                startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
-                break;
-            case R.id.wallet:
-                break;
-            case R.id.chart:
-                break;
-            case R.id.add:
-                showpop(view);
-                break;
-            case R.id.tradebutton:
-                startActivity(new Intent(this, LimitTraderActivity.class));
-                break;
+        if (view.getId() == R.id.logOut) {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
         }
     }
-    private void showpop(View view){
-        myDialog.setContentView(R.layout.popup_add);
-        Window window = myDialog.getWindow();
-        window.setGravity(Gravity.CENTER);
-        window.getAttributes().windowAnimations = R.style.DialogAnimator;
-        TextView close_pop = myDialog.findViewById(R.id.txtclose);
-        close_pop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myDialog.dismiss();
-            }
-        });
-        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        myDialog.show();
-        String given_key =  findViewById(R.id.key_input).toString().trim();
-        String given_secret = findViewById(R.id.secret_input).toString().trim();
-    }
+
+
+
 }
