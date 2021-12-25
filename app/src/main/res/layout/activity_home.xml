@@ -47,6 +47,18 @@
         />
 
 
+    <Button
+        android:id="@+id/testButtonChart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/preveiw"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/bannerDescription"
+        app:layout_constraintVertical_bias="1.0" />
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -121,13 +133,13 @@
         android:id="@+id/preveiw"
         android:layout_width="373dp"
         android:layout_height="330dp"
+        android:background="#50ffffff"
         android:scrollbarSize="3dp"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbarThumbVertical="@color/white"
         android:scrollbars="vertical"
         android:text="loading . . ."
         android:textAlignment="center"
-        android:background="#50ffffff"
         android:textColor="@color/white"
         android:textSize="20dp"
         app:layout_constraintBottom_toTopOf="@+id/toolbar"

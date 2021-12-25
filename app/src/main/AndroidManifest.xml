@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CryptoTrader">
         <activity
+            android:name=".CandleStickActivity"
+            android:exported="false" />
+        <activity
             android:name=".TraderMarketOrderActivity"
             android:exported="false" />
         <activity

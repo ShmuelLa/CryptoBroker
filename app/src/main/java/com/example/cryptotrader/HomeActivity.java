@@ -48,7 +48,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private ImageButton wallet, chart, add, profile;
     private Button addButton, limitOrderButton, cancelTradeButton, simpleOrderButton,
-            btcVal, ethVal, adaVal, manaVal, bnbVal;
+            btcVal, ethVal, adaVal, manaVal, bnbVal, testButton;
     private Dialog myDialog;
     private EditText accountName, keyInput, secretInput;
     private DatabaseReference accounts_db;
@@ -65,6 +65,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         profile = findViewById(R.id.profile);
         wallet = findViewById(R.id.wallet);
         chart = findViewById(R.id.chart);
+        testButton = findViewById(R.id.testButtonChart);
+        testButton.setOnClickListener(this);
         wallet.setOnClickListener(this);
         chart.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -154,6 +156,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch(view.getId()){
+            case R.id.testButtonChart:
+                startActivity(new Intent(HomeActivity.this, CandleStickActivity.class));
+                break;
             case R.id.wallet:
                 showWallet(view);
                 break;
