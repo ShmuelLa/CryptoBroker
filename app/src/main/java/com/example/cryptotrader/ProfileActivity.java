@@ -58,7 +58,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         DatabaseReference accounts_db = FirebaseDatabase.getInstance().getReference("Accounts");
         progressBar = findViewById(R.id.progressBar);
         textView.setMovementMethod(new ScrollingMovementMethod());
-        TreeMap<String,String> prices = new TreeMap<>();
         ArrayList<String> text_preveiw = new ArrayList<>();
         text_preveiw.add("Accounts balances:\n");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -135,7 +134,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         });
     }
-
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.logOut) {
@@ -143,7 +141,4 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
         }
     }
-
-
-
 }
