@@ -2,11 +2,16 @@ package com.example.cryptotrader;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -43,6 +48,11 @@ public class CancelOrderActivity extends AppCompatActivity {
     private ArrayList<String> clientsList = new ArrayList<>();
     private ArrayList<String> normalizedOrderList;
     private ProgressBar progressBar;
+    private Dialog myDialog;
+    private TextView inputMessage, popupTopic;
+    private ImageView popupImage;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +70,8 @@ public class CancelOrderActivity extends AppCompatActivity {
         cancelOrderButton = findViewById(R.id.sendCancelOderButton);
         emergencyButton = findViewById(R.id.emergencyButton);
         progressBar = findViewById(R.id.progressBar);
+        myDialog = new Dialog(this);
+
     }
 
     public ArrayList<String> normalizeOrderListForSpinner(List<Order> beforeList) {
@@ -111,12 +123,15 @@ public class CancelOrderActivity extends AppCompatActivity {
                                                         client.cancelOrder(new CancelOrderRequest(symbol, oid), new BinanceApiCallback<CancelOrderResponse>() {
                                                             @Override
                                                             public void onResponse(CancelOrderResponse cancelOrderResponse) {
-                                                                System.out.println(cancelOrderResponse.getStatus());
+                                                                showOrderPopup("Success"
+                                                                        , "Order: \n " + cancelOrderResponse.getOrderId() + "\n"
+                                                                                + cancelOrderResponse.getSymbol() + "\nCancelled");
                                                             }
 
                                                             @Override
                                                             public void onFailure(Throwable cause) {
                                                                 try {
+                                                                    showOrderPopup("Error", cause.toString().split(":")[1]);
                                                                     throw cause;
                                                                 } catch (Throwable throwable) {
                                                                     throwable.printStackTrace();
@@ -177,5 +192,17 @@ public class CancelOrderActivity extends AppCompatActivity {
         openOrdersSpinner.setAdapter(ordersAdapter);
     }
 
+    void showOrderPopup(String topic, String msg) {
+        myDialog.setContentView(R.layout.popup_invalid_order_warning);
+        inputMessage = myDialog.findViewById(R.id.orderInputErrorText);
+        popupTopic = myDialog.findViewById(R.id.orderInputTopic);
+        popupImage = myDialog.findViewById(R.id.orderPopupImage);
+        if (topic.equals("Error")) popupImage.setImageResource(R.drawable.error_icon);
+        else popupImage.setImageResource(R.drawable.success_icon);
+        popupTopic.setText(topic);
+        inputMessage.setText(msg);
+        myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        myDialog.show();
+    }
 
 }
