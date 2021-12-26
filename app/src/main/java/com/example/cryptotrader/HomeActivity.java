@@ -101,7 +101,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        barChart.animateY(2000);
+        barChart.animateXY(2000, 2000);
         barChartSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -115,7 +115,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                barChart.animateY(2000);
+                barChart.animateXY(2000, 2000);
             }
 
             @Override
@@ -333,7 +333,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @SuppressLint("StaticFieldLeak")
     private class barChartTask extends AsyncTask {
         private String symbol;
-
         @SuppressWarnings("deprecation")
         private barChartTask(String symbol) {
             this.symbol = symbol;
@@ -342,14 +341,38 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected Object doInBackground(Object[] objects) {
             CoinGeckoApiClient client = new CoinGeckoApiClientImpl();
+            int barColor = 0xFF6200ee;
             resultMarketChart = client.getCoinMarketChartById(symbol,"usd",1);
             for (List<String> list : resultMarketChart.getPrices()) {
                 BarEntry tempEntry = new BarEntry(chartCounter, Float.parseFloat(list.get(1)));
                 chartCounter++;
                 chartEntries.add(tempEntry);
             }
-            barDataSet = new BarDataSet(chartEntries, "Price");
-            barDataSet.setColor(0xFF6200ee);
+            String symbolViewText = symbol.substring(0, 1).toUpperCase() + symbol.substring(1);
+            barDataSet = new BarDataSet(chartEntries, symbolViewText + " Daily Candles");
+            switch(symbol) {
+                case("bitcoin"): {
+                    barColor = 0xFFFFAB01;
+                    break;
+                }
+                case("ethereum"): {
+                    barColor = 0xFFF5F5F5;
+                    break;
+                }
+                case("cardano"): {
+                    barColor = 0xFF2962FF;
+                    break;
+                }
+                case("decentraland"): {
+                    barColor = 0xFFFA1302;
+                    break;
+                }
+                case("binancecoin"): {
+                    barColor = 0xFFFFD600;
+                    break;
+                }
+            }
+            barDataSet.setColor(barColor);
             barDataSet.setValueTextColor(Color.WHITE);
             barDataSet.setValueTextSize(16f);
             client.shutdown();
@@ -357,7 +380,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             barChart.setNoDataTextColor(Color.WHITE);
             barChart.setFitBars(true);
             barChart.setData(barData);
-            barChart.getDescription().setText("bitcoin daily");
+            barChart.getAxisLeft().setTextColor(0xFFffffff);
+            barChart.getXAxis().setTextColor(0xFFffffff);
+            barChart.getLegend().setTextColor(0xFFffffff);
+            barChart.getDescription().setTextColor(0xFFffffff);
+            barChart.getDescription().setText("© GGAS Team");
             return null;
         }
     }
@@ -366,6 +393,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      * Sets the status bar color to #121212, The apps main background color
      * This is used mainly for cosmetics in order to create an immersive feel while browsing the app
      */
+    @SuppressLint("ObsoleteSdkInt")
     void setStatusBarColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.status_bar, this.getTheme()));
