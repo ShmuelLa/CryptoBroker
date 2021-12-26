@@ -6,7 +6,6 @@
     android:background="@drawable/layout_bg"
     android:padding="5dp"
     android:layout_gravity="center">
-    <!--    c2b5a8-->
     <TextView
         android:id="@+id/txtclose"
         android:layout_width="30dp"
@@ -16,8 +15,6 @@
         android:textStyle="bold"
         android:layout_gravity="end"
         android:gravity="center" />
-<!-- this is the headline   -->
-    <!--    c2b5a8-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -32,9 +29,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="5dp"/>
     </LinearLayout>
-<!--    this is for data cuming from binance-->
 
-<!--    this is for the input-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="241dp"
@@ -88,8 +83,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="25dp"
-        android:background="#FF0000"
+        android:backgroundTint="@color/white"
         android:text="add"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
+
         />
 </LinearLayout>

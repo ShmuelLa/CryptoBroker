@@ -87,6 +87,8 @@
     <Button
         android:id="@+id/initiateOrderButton"
         android:layout_width="188dp"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
         android:layout_height="73dp"
         android:text="@string/create_order"
         app:layout_constraintBottom_toBottomOf="parent"
