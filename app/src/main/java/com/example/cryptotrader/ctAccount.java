@@ -1,11 +1,5 @@
 package com.example.cryptotrader;
 
-import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.view.Gravity;
-import android.view.Window;
-
 import androidx.annotation.NonNull;
 
 import com.binance.api.client.BinanceApiClientFactory;
@@ -37,25 +31,6 @@ public class ctAccount {
         this.executor = executor;
         credentials = otherCredentials;
         clientName = name;
-    }
-
-    public ctCredentials getClientCredentialsByName(String requestedClient, DatabaseReference db, FirebaseUser user) {
-        AtomicReference<ctCredentials> result = new AtomicReference<>(new ctCredentials());
-        db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if(task.isSuccessful()) {
-                    GenericTypeIndicator<HashMap<String, ctCredentials>> gType =
-                            new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
-                    HashMap<String, ctCredentials> map = task.getResult().getValue(gType);
-                    map.forEach((clientName, clientTokens) ->
-                    {
-                        if(clientName.equals(requestedClient)) result.set(clientTokens);
-                    });
-                }
-            }
-        });
-        return result.get();
     }
 
     /**

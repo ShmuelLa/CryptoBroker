@@ -24,7 +24,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -43,7 +42,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class LimitTraderActivity extends AppCompatActivity implements View.OnClickListener {
     private NotificationManagerCompat notificationManager;
@@ -66,8 +64,7 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
     private String chosenTargetCoin;
     private String chosenCoinAmount;
     private String chosenCoinTargetPrice;
-    private ProgressBar progressBar;
-    private ImageButton profileButton;
+    private ImageButton profileButton, shareButton;
     private Dialog myDialog;
     ArrayList<String> clientsList = new ArrayList<>();
 
@@ -103,9 +100,9 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
         profile = findViewById(R.id.profile);
         profile.setOnClickListener(this);
         setStatusBarColor();
-        if (clientsList.isEmpty() || clientsList.size() == 1) {
-            showOrderPopup("Error", "Your account has no active api clients thus cannot trade");
-        }
+//        if (clientsList.isEmpty() || clientsList.size() == 1) {
+//            showOrderPopup("Error", "Your account has no active api clients thus cannot trade");
+//        }
     }
 
     @Override
@@ -253,6 +250,7 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
         Window window = myDialog.getWindow();
         window.setGravity(Gravity.CENTER);
         window.getAttributes().windowAnimations = R.style.DialogAnimator;
+        shareButton = myDialog.findViewById(R.id.shareButton);
         inputMessage = myDialog.findViewById(R.id.orderInputErrorText);
         popupTopic = myDialog.findViewById(R.id.orderInputTopic);
         popupImage = myDialog.findViewById(R.id.orderPopupImage);
@@ -261,8 +259,24 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
         popupTopic.setText(topic);
         inputMessage.setText(msg);
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareOutsideApp();
+            }
+        });
         myDialog.show();
     }
+
+    private void shareOutsideApp(){
+        Intent sendIntent = new Intent(); sendIntent.setAction(Intent.ACTION_SEND);
+        String msg = "Hey " + chosenClient + ", wanted you to know, I'm going to execute the following order:";
+        msg += " " + chosenOrderType + " " + chosenCoinAmount +" " + chosenTargetCoin;
+        sendIntent.putExtra(Intent.EXTRA_TEXT, msg );
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
+    }
+
 
     /**
      * Sets the status bar color to #121212, The apps main background color

@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
  */
 public class ForgotPasswordActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private TextView backToLoginBtn;
     private EditText editTextEmail;
     private Button resetButton;
     private ProgressBar progressBar;
@@ -38,6 +40,8 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         editTextEmail = findViewById(R.id.email);
         resetButton = findViewById(R.id.forgotButton);
         progressBar = findViewById(R.id.progressBar);
+        backToLoginBtn = findViewById(R.id.backToLogin);
+        backToLoginBtn.setOnClickListener(this);
         mAuth = FirebaseAuth.getInstance();
         resetButton.setOnClickListener(this);
         setStatusBarColor();
@@ -48,6 +52,10 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         switch (view.getId()){
             case R.id.forgotButton:
                 resetPassword();
+                startActivity(new Intent(this, LoginActivity.class));
+                break;
+
+            case R.id.backToLogin:
                 startActivity(new Intent(this, LoginActivity.class));
                 break;
         }

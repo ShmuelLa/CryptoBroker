@@ -12,16 +12,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.binance.api.client.BinanceApiAsyncRestClient;
@@ -29,7 +30,6 @@ import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.AssetBalance;
-import com.binance.api.client.domain.market.TickerPrice;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -49,10 +49,8 @@ import com.litesoftwares.coingecko.impl.CoinGeckoApiClientImpl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -74,6 +72,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private DatabaseReference accounts_db;
     private FirebaseUser user;
     private ProgressBar progressBar;
+    private Spinner barChartSpinner;
+    private String[] coinNames= {"bitcoin", "ethereum", "cardano", "decentraland", "binancecoin"};
+
     @Override
     /**
      *  on create to initialize all of the components this screen require, listeners etc'. setting the visualization
@@ -87,6 +88,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         profile = findViewById(R.id.profile);
         wallet = findViewById(R.id.wallet);
         chart = findViewById(R.id.chart);
+<<<<<<< HEAD
+||||||| f409f97
+//        testButton = findViewById(R.id.testButtonChart);
+//        testButton.setOnClickListener(this);
+=======
+        barChartSpinner = findViewById(R.id.barChartSpinner);
+        ArrayAdapter<String> coinChartAdapter = new ArrayAdapter<>
+                (this, android.R.layout.simple_spinner_dropdown_item, coinNames);
+        barChartSpinner.setAdapter(coinChartAdapter);
+>>>>>>> main
         wallet.setOnClickListener(this);
         chart.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -98,13 +109,34 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         chartEntries = new ArrayList<>();
         barChart = findViewById(R.id.barChart);
         try {
-            new barChartTask().execute().get();
+            new barChartTask("bitcoin").execute().get();
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        barChart.animateY(2000);
+        barChart.animateXY(2000, 2000);
+        barChartSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String chosenCoin = barChartSpinner.getSelectedItem().toString();
+                chartEntries.clear();
+                barDataSet.clear();
+                try {
+                    new barChartTask(chosenCoin).execute().get();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                barChart.animateXY(2000, 2000);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     /**
@@ -246,6 +278,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
+<<<<<<< HEAD
 
     /**
      * this method shows a poppup containing a veiw that helps user to add an binance API key to the app.
@@ -253,6 +286,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      * a toast message of the progress.
      * @param view
      */
+||||||| f409f97
+=======
+
+>>>>>>> main
     private void showPopupAdd(View view){
         myDialog.setContentView(R.layout.popup_add);
         addButton = myDialog.findViewById(R.id.btnadd);
@@ -337,29 +374,64 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         myDialog.show();
     }
 
+<<<<<<< HEAD
     /**
      * this method is for using the Coingeko API and MPAndroidChart library, using an Asynctask so
      * this method will run in the background so to not clutter main thread and main methods.
      */
+||||||| f409f97
+
+
+
+
+
+
+=======
+>>>>>>> main
     @SuppressWarnings("rawtypes")
     @SuppressLint("StaticFieldLeak")
     private class barChartTask extends AsyncTask {
-
+        private String symbol;
         @SuppressWarnings("deprecation")
-        private barChartTask() {
+        private barChartTask(String symbol) {
+            this.symbol = symbol;
         }
 
         @Override
         protected Object doInBackground(Object[] objects) {
             CoinGeckoApiClient client = new CoinGeckoApiClientImpl();
-            resultMarketChart = client.getCoinMarketChartById("bitcoin","usd",1);
+            int barColor = 0xFF6200ee;
+            resultMarketChart = client.getCoinMarketChartById(symbol,"usd",1);
             for (List<String> list : resultMarketChart.getPrices()) {
                 BarEntry tempEntry = new BarEntry(chartCounter, Float.parseFloat(list.get(1)));
                 chartCounter++;
                 chartEntries.add(tempEntry);
             }
-            barDataSet = new BarDataSet(chartEntries, "Price");
-            barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+            String symbolViewText = symbol.substring(0, 1).toUpperCase() + symbol.substring(1);
+            barDataSet = new BarDataSet(chartEntries, symbolViewText + " Daily Candles");
+            switch(symbol) {
+                case("bitcoin"): {
+                    barColor = 0xFFFFAB01;
+                    break;
+                }
+                case("ethereum"): {
+                    barColor = 0xFFF5F5F5;
+                    break;
+                }
+                case("cardano"): {
+                    barColor = 0xFF2962FF;
+                    break;
+                }
+                case("decentraland"): {
+                    barColor = 0xFFFA1302;
+                    break;
+                }
+                case("binancecoin"): {
+                    barColor = 0xFFFFD600;
+                    break;
+                }
+            }
+            barDataSet.setColor(barColor);
             barDataSet.setValueTextColor(Color.WHITE);
             barDataSet.setValueTextSize(16f);
             client.shutdown();
@@ -367,7 +439,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             barChart.setNoDataTextColor(Color.WHITE);
             barChart.setFitBars(true);
             barChart.setData(barData);
-            barChart.getDescription().setText("bitcoin daily");
+            barChart.getAxisLeft().setTextColor(0xFFffffff);
+            barChart.getXAxis().setTextColor(0xFFffffff);
+            barChart.getLegend().setTextColor(0xFFffffff);
+            barChart.getDescription().setTextColor(0xFFffffff);
+            barChart.getDescription().setText("© GGAS Team");
             return null;
         }
     }
@@ -376,6 +452,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      * Sets the status bar color to #121212, The apps main background color
      * This is used mainly for cosmetics in order to create an immersive feel while browsing the app
      */
+    @SuppressLint("ObsoleteSdkInt")
     void setStatusBarColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.status_bar, this.getTheme()));
