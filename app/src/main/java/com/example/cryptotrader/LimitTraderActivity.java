@@ -246,6 +246,7 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
      * @param msg The popup message
      */
     void showOrderPopup(String topic, String msg) {
+        boolean success = true;
         myDialog.setContentView(R.layout.popup_invalid_order_warning);
         Window window = myDialog.getWindow();
         window.setGravity(Gravity.CENTER);
@@ -254,24 +255,34 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
         inputMessage = myDialog.findViewById(R.id.orderInputErrorText);
         popupTopic = myDialog.findViewById(R.id.orderInputTopic);
         popupImage = myDialog.findViewById(R.id.orderPopupImage);
-        if (topic.equals("Error")) popupImage.setImageResource(R.drawable.error_icon);
-        else popupImage.setImageResource(R.drawable.success_icon);
+        if (topic.equals("Error")){
+            popupImage.setImageResource(R.drawable.error_icon);
+            success = false;
+        }
+        else {popupImage.setImageResource(R.drawable.success_icon);}
         popupTopic.setText(topic);
         inputMessage.setText(msg);
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        boolean finalSuccess = success;
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareOutsideApp();
+                shareOutsideApp(finalSuccess);
             }
         });
         myDialog.show();
     }
 
-    private void shareOutsideApp(){
+    private void shareOutsideApp(boolean success){
+        String msg = "";
         Intent sendIntent = new Intent(); sendIntent.setAction(Intent.ACTION_SEND);
-        String msg = "Hey " + chosenClient + ", wanted you to know, I'm going to execute the following order:";
-        msg += " " + chosenOrderType + " " + chosenCoinAmount +" " + chosenTargetCoin;
+        if(success){
+            msg = "Hey " + chosenClient + ", wanted you to know, I'm going to execute the following order:";
+            msg += " " + chosenOrderType + " " + chosenCoinAmount +" " + chosenTargetCoin;
+        }
+        if(!success){
+            msg = "Hey, I'm having some troubles with " + chosenOrderType + " opersation, please contact me ASAP";
+        }
         sendIntent.putExtra(Intent.EXTRA_TEXT, msg );
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
