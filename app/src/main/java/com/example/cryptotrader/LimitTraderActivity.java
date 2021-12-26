@@ -12,6 +12,7 @@ import androidx.core.app.NotificationManagerCompat;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.Notification;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -49,7 +50,7 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
     private DatabaseReference accountsDB;
     private FirebaseUser user;
     private Button sendOrderButton;
-    private ImageView popupImage;
+    private ImageView popupImage,profile;
     private TextView fundText, priceText, inputMessage, popupTopic;
     private final String[] tradeOptions = {"Limit Buy", "Limit Sell"};
     private final String[] symbolFundOptions = {"USDT", "BUSD", "BNB"};
@@ -99,6 +100,8 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
         priceText = findViewById(R.id.marketPriceText);
         myDialog = new Dialog(this);
         sendOrderButton.setOnClickListener(this);
+        profile = findViewById(R.id.profile);
+        profile.setOnClickListener(this);
         setStatusBarColor();
         if (clientsList.isEmpty() || clientsList.size() == 1) {
             showOrderPopup("Error", "Your account has no active api clients thus cannot trade");
@@ -119,6 +122,8 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
             if (chosenOrderType.equals("Limit Buy") || chosenOrderType.equals("Limit Sell")) {
                 initiateLimitOrder();
             }
+        } else if (v.getId() == R.id.profile) {
+            startActivity(new Intent(LimitTraderActivity.this, ProfileActivity.class));
         }
     }
 

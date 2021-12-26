@@ -55,27 +55,30 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
-
+/**
+ * home screen of our app, from here you can navigate to all other pages of the app,
+ * popup, user stored data, information about the current market including specific
+ * crypto currencies and their status, and our own implantation of visualization of the data.
+ */
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
-
-
     private ArrayList<BarEntry> chartEntries;
     private MarketChart resultMarketChart;
-    BarChart barChart;
-    BarDataSet barDataSet;
+    private BarChart barChart;
+    private BarDataSet barDataSet;
     private int chartCounter = 0;
-
-
-
     private ImageButton wallet, chart, add, profile;
     private Button addButton, limitOrderButton, cancelTradeButton, simpleOrderButton,
-            btcVal, ethVal, adaVal, manaVal, bnbVal, testButton;
+            btcVal, ethVal, adaVal, manaVal, bnbVal;
     private Dialog myDialog;
     private EditText accountName, keyInput, secretInput;
     private DatabaseReference accounts_db;
     private FirebaseUser user;
     private ProgressBar progressBar;
     @Override
+    /**
+     *  on create to initialize all of the components this screen require, listeners etc'. setting the visualization
+     *  of a wanted given coin chosen by the user, defaulting in BTC when no coin in given.
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         myDialog = new Dialog(this);
@@ -84,8 +87,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         profile = findViewById(R.id.profile);
         wallet = findViewById(R.id.wallet);
         chart = findViewById(R.id.chart);
-//        testButton = findViewById(R.id.testButtonChart);
-//        testButton.setOnClickListener(this);
         wallet.setOnClickListener(this);
         chart.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -94,11 +95,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         accounts_db = FirebaseDatabase.getInstance().getReference("Accounts");
         progressBar = findViewById(R.id.progressBar);
         setStatusBarColor();
-
-
-
-
-
         chartEntries = new ArrayList<>();
         barChart = findViewById(R.id.barChart);
         try {
@@ -111,12 +107,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         barChart.animateY(2000);
     }
 
+    /**
+     * for navigation purposes, this on click method what represents the Menu of the application.
+     * can be accessed for every page.
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         switch(view.getId()){
-//            case R.id.testButtonChart:
-//                startActivity(new Intent(HomeActivity.this, CandleStickActivity.class));
-//                break;
             case R.id.wallet:
                 showWallet(view);
                 break;
@@ -134,6 +132,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * this method shows the a popup that contains the values of a chosen account from the users accounts.
+     * defaulting in a select account message, then sends an API request to firebase to get the available accounts.
+     * on completion of the request we add then to the an auto complete text view, then sending two API
+     * request to Binance- one to get all of the assets in the account and the other the the price
+     * of all coins in the market, then parsing them to get how much is free in USDT(stable-coin)
+     * and how much is in assets in USD at the account.
+     * @param view
+     */
     private void showWallet(View view) {
         ArrayList<String> nList = new ArrayList<>();
         ArrayList<ctCredentials> ctCredentialsArrayList = new ArrayList<>();
@@ -239,6 +246,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
+
+    /**
+     * this method shows a poppup containing a veiw that helps user to add an binance API key to the app.
+     * all values are added to firebase realtime storage so each account needs to be added once. showing
+     * a toast message of the progress.
+     * @param view
+     */
     private void showPopupAdd(View view){
         myDialog.setContentView(R.layout.popup_add);
         addButton = myDialog.findViewById(R.id.btnadd);
@@ -280,6 +294,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         myDialog.show();
     }
 
+    /**
+     * this method shows the main popup for the trading platform at the app. from here the user
+     * can navigate to cancel orders, order limit, and plain buy and sell screens, using buttons
+     * and button onClicklisteners.
+     * @param view
+     */
     void showPopupTradeChooser(View view) {
         myDialog.setContentView(R.layout.popup_trader_chooser);
         Window window = myDialog.getWindow();
@@ -317,12 +337,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         myDialog.show();
     }
 
-
-
-
-
-
-
+    /**
+     * this method is for using the Coingeko API and MPAndroidChart library, using an Asynctask so
+     * this method will run in the background so to not clutter main thread and main methods.
+     */
     @SuppressWarnings("rawtypes")
     @SuppressLint("StaticFieldLeak")
     private class barChartTask extends AsyncTask {
@@ -367,13 +385,3 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 }
-
-
-//          case "USDT":
-//                  if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
-//                  biggy = new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
-//                  .setScale(3,BigDecimal.ROUND_HALF_EVEN);
-//                  }else{
-//                  balance.put("USDT",new BigDecimal(0));
-//                  }
-//                  break;

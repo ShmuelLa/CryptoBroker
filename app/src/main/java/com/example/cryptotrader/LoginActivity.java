@@ -41,7 +41,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ *  this class is the second screen the the user are presented with, using firebase to authenticate
+ *  users, directing users to forgot password section or register section.
+ */
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText editTextEmail, editTextPassword;
     private TextView register, forgotPassword;
@@ -50,6 +53,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
 
+    /**
+     *  on create to initialize all of the components this screen require, listeners etc'. using a
+     *  separate thread to run custom notifications for users, using real time data from Coingeko using
+     *  Coingeko API request.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +113,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
     }
+
+    /**
+     * method for navigation based on user status (remember password, nor registered etc')
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -133,6 +147,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             progressBar.setVisibility(View.GONE);
         }
     }
+
+    /**
+     * using firebase to validate the information sent to the users email adress.
+     * @return
+     */
     private String[] validateEmailAndPass(){
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
@@ -174,8 +193,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void userLogin(String email,String password) {
-
-
         mAuth.signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override

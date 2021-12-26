@@ -16,6 +16,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * forgot password interacts with firebase to send an email with a temporary password
+ * to recover and set a new password.
+ */
 public class ForgotPasswordActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText editTextEmail;
@@ -23,6 +27,10 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
 
+    /**
+     * for initialization of variables, setting listeners, etc'.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +45,6 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
 
     @Override
     public void onClick(View view) {
-        String emailAddr;
         switch (view.getId()){
             case R.id.forgotButton:
                 resetPassword();
@@ -46,6 +53,10 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         }
     }
 
+    /**
+     * Get the users email, check if a valid email or not, then use firebase to reset the password and send
+     * the user his temporary password, while using a toast message to notify on the progress.
+     */
     private void resetPassword() {
         String email = editTextEmail.getText().toString().trim();
         if(email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
