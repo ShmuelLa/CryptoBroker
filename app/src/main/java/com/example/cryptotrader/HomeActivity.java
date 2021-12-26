@@ -88,15 +88,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         profile = findViewById(R.id.profile);
         wallet = findViewById(R.id.wallet);
         chart = findViewById(R.id.chart);
-
-//        testButton = findViewById(R.id.testButtonChart);
-//        testButton.setOnClickListener(this);
-
         barChartSpinner = findViewById(R.id.barChartSpinner);
         ArrayAdapter<String> coinChartAdapter = new ArrayAdapter<>
                 (this, android.R.layout.simple_spinner_dropdown_item, coinNames);
         barChartSpinner.setAdapter(coinChartAdapter);
-
         wallet.setOnClickListener(this);
         chart.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -277,8 +272,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
-
-
+  
     /**
      * this method shows a poppup containing a veiw that helps user to add an binance API key to the app.
      * all values are added to firebase realtime storage so each account needs to be added once. showing
@@ -286,7 +280,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      * @param view
      */
 
-    private void showPopupAdd(View view){
+  private void showPopupAdd(View view){
         myDialog.setContentView(R.layout.popup_add);
         addButton = myDialog.findViewById(R.id.btnadd);
         accountName = myDialog.findViewById(R.id.account_name_input);
@@ -369,17 +363,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
-
-
+  
     /**
      * this method is for using the Coingeko API and MPAndroidChart library, using an Asynctask so
      * this method will run in the background so to not clutter main thread and main methods.
      */
-
-
-
-
-
 
     @SuppressWarnings("rawtypes")
     @SuppressLint("StaticFieldLeak")
