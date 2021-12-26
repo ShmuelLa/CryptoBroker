@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -42,12 +43,13 @@ import com.google.firebase.database.GenericTypeIndicator;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TraderMarketOrderActivity extends AppCompatActivity implements View.OnClickListener{
+public class TraderMarketOrderActivity extends AppCompatActivity implements View.OnClickListener {
     private NotificationManagerCompat notificationManager;
     private DatabaseReference accountsDB;
     private FirebaseUser user;
+    private ImageButton shareButton;
     private Button sendOrderButton;
-    private ImageView popupImage,profile;
+    private ImageView popupImage, profile;
     private TextView fundText, inputMessage, popupTopic;
     private final String[] tradeOptions = {"Buy", "Sell"};
     private final String[] symbolFundOptions = {"USDT", "BUSD", "BNB"};
@@ -111,7 +113,7 @@ public class TraderMarketOrderActivity extends AppCompatActivity implements View
             if (chosenOrderType.equals("Buy") || chosenOrderType.equals("Sell")) {
                 initiateMarketOrder();
             }
-        }else if (v.getId() == R.id.profile) {
+        } else if (v.getId() == R.id.profile) {
             startActivity(new Intent(TraderMarketOrderActivity.this, ProfileActivity.class));
         }
     }
@@ -126,8 +128,7 @@ public class TraderMarketOrderActivity extends AppCompatActivity implements View
         if (chosenCoinAmount == null) {
             showOrderPopup("Error", "Any order must have a coin amount (Null)");
             return true;
-        }
-        else if (chosenCoinAmount.isEmpty()) {
+        } else if (chosenCoinAmount.isEmpty()) {
             showOrderPopup("Error", "Any order must have a coin amount (isEmpty)");
             return true;
         }
@@ -144,7 +145,8 @@ public class TraderMarketOrderActivity extends AppCompatActivity implements View
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (task.isSuccessful()) {
                     GenericTypeIndicator<HashMap<String, ctCredentials>> gType =
-                            new GenericTypeIndicator<HashMap<String, ctCredentials>>() {};
+                            new GenericTypeIndicator<HashMap<String, ctCredentials>>() {
+                            };
                     HashMap<String, ctCredentials> map = task.getResult().getValue(gType);
                     assert map != null;
                     map.forEach((clientName, clientTokens) -> {
@@ -156,12 +158,12 @@ public class TraderMarketOrderActivity extends AppCompatActivity implements View
                                 client.newOrder(marketBuy(chosenSymbol, chosenCoinAmount)
                                         , createOrderCallback());
                             }
-                            else if (chosenOrderType.equals("Sell")) {
+                            if (chosenOrderType.equals("Sell")) {
                                 client.newOrder(marketSell(chosenSymbol, chosenCoinAmount)
                                         , createOrderCallback());
                             }
                         }
-                        else if (chosenClient.equals("All")) {
+                        if (chosenClient.equals("All")) {
                             BinanceApiClientFactory factory = BinanceApiClientFactory
                                     .newInstance(clientTokens.getKey(), clientTokens.getSecret());
                             BinanceApiAsyncRestClient client = factory.newAsyncRestClient();
@@ -169,7 +171,7 @@ public class TraderMarketOrderActivity extends AppCompatActivity implements View
                                 client.newOrder(marketBuy(chosenSymbol, chosenCoinAmount)
                                         , createOrderCallback());
                             }
-                            else if (chosenOrderType.equals("Sell")) {
+                            if (chosenOrderType.equals("Sell")) {
                                 client.newOrder(marketSell(chosenSymbol, chosenCoinAmount)
                                         , createOrderCallback());
                             }
@@ -205,6 +207,7 @@ public class TraderMarketOrderActivity extends AppCompatActivity implements View
 
                 notificationManager.notify(1, notification);
             }
+
             @Override
             public void onFailure(Throwable cause) {
                 try {
@@ -223,9 +226,10 @@ public class TraderMarketOrderActivity extends AppCompatActivity implements View
      * contains information about the cause of failure and reason of success
      *
      * @param topic The topic of the popup, either Error or Success
-     * @param msg The popup message
+     * @param msg   The popup message
      */
     void showOrderPopup(String topic, String msg) {
+        boolean success = true;
         myDialog.setContentView(R.layout.popup_invalid_order_warning);
         Window window = myDialog.getWindow();
         window.setGravity(Gravity.CENTER);
@@ -233,13 +237,39 @@ public class TraderMarketOrderActivity extends AppCompatActivity implements View
         inputMessage = myDialog.findViewById(R.id.orderInputErrorText);
         popupTopic = myDialog.findViewById(R.id.orderInputTopic);
         popupImage = myDialog.findViewById(R.id.orderPopupImage);
-        if (topic.equals("Error")) popupImage.setImageResource(R.drawable.error_icon);
+        shareButton = myDialog.findViewById(R.id.shareButton);
+        if (topic.equals("Error")) {
+            popupImage.setImageResource(R.drawable.error_icon);
+            success = false;
+        }
         else popupImage.setImageResource(R.drawable.success_icon);
         popupTopic.setText(topic);
         inputMessage.setText(msg);
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        boolean finalSuccess = success;
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareOutsideApp(finalSuccess);
+            }
+        });
         myDialog.show();
     }
+    private void shareOutsideApp(boolean success){
+        String msg = "";
+        Intent sendIntent = new Intent(); sendIntent.setAction(Intent.ACTION_SEND);
+        if(success){
+            msg = "Hey " + chosenClient + ", wanted you to know, I'm going to execute the following order:";
+            msg += " " + chosenOrderType + " " + chosenCoinAmount +" " + chosenTargetCoin;
+        }
+        if(!success){
+            msg = "Hey, I'm having some troubles with " + chosenOrderType + " operation, please contact me ASAP";
+        }
+        sendIntent.putExtra(Intent.EXTRA_TEXT, msg );
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
+    }
+
 
     /**
      * Sets the status bar color to #121212, The apps main background color
@@ -248,8 +278,7 @@ public class TraderMarketOrderActivity extends AppCompatActivity implements View
     void setStatusBarColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.status_bar, this.getTheme()));
-        }
-        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.status_bar));
         }
     }
