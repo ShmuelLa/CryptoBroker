@@ -44,7 +44,9 @@ dependencies {
     implementation files('libs/MPAndroidChart-v3.0.1.jar')
     implementation 'com.google.firebase:firebase-auth:21.0.1'
     implementation 'com.google.firebase:firebase-database:20.0.3'
+    //noinspection GradleDependency
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1' //Do Not Update Version
+    //noinspection GradleDependency
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1' //Do Not Update Version
     implementation 'androidx.navigation:navigation-fragment:2.3.5'
     implementation 'androidx.navigation:navigation-ui:2.3.5'
