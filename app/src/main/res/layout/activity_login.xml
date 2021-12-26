@@ -108,13 +108,11 @@
         android:layout_marginBottom="180dp"
         android:ems="15"
         android:text="LOGIN"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
-
-
-
-
 
     <ProgressBar
         android:id="@+id/progressBar"
