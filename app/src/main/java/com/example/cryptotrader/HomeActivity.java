@@ -272,13 +272,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
+  
     /**
      * this method shows a poppup containing a veiw that helps user to add an binance API key to the app.
      * all values are added to firebase realtime storage so each account needs to be added once. showing
      * a toast message of the progress.
      * @param view
      */
-    private void showPopupAdd(View view){
+
+  private void showPopupAdd(View view){
         myDialog.setContentView(R.layout.popup_add);
         addButton = myDialog.findViewById(R.id.btnadd);
         accountName = myDialog.findViewById(R.id.account_name_input);
@@ -361,10 +363,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
+  
     /**
      * this method is for using the Coingeko API and MPAndroidChart library, using an Asynctask so
      * this method will run in the background so to not clutter main thread and main methods.
      */
+
     @SuppressWarnings("rawtypes")
     @SuppressLint("StaticFieldLeak")
     private class barChartTask extends AsyncTask {
