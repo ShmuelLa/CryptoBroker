@@ -26,6 +26,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private EditText editTextEmail, editTextPassword, editTextPasswordValidation;
     private FirebaseAuth mAuth;
     private static final int PASS_LENGTH = 6 ;
+
+    /**
+     * this method initialize all of the components this screen require, listeners etc'.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +47,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         setStatusBarColor();
     }
 
+    /**
+     * this method is for navigation purposes.
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -57,7 +66,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 registerUser(emailAndPass[0],emailAndPass[1]);
         }
     }
-    /*take an advice from other group devs if splitting this function is the right thing to do*/
+
+    /**
+     * this method sets our rules for registering to our app, checking the length of the password,
+     * of both entries match and if the email address is valid.
+     * @return
+     */
     private String[] validateEmailAndPass(){
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
@@ -104,7 +118,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-
+    /**
+     * uses firebase to register a new user the the realtime database.
+     * @param email
+     * @param password
+     */
     private void registerUser(String email,String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {

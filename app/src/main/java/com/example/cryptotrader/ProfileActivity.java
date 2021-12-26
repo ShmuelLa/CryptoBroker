@@ -43,11 +43,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
+/**
+ * profile class that shows the user all of his free assets in the Binance exchange. also allows
+ * the user to log out of the app and log in with other accounts if needed.
+ */
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener{
     private Button logOut;
     private ProgressBar progressBar;
     private TextView textView;
 
+    /**
+     * this method initialize all of the components this screen require, listeners etc'. also sends an
+     * two API request to binance to get all of the values of a the assets the current account holds and parsing them.
+     * one is a snapshot of the current market prices and the other is for know the amounts the accounts of the user
+     * holds in each asset. then  displaying said data on each account the user holds to the user.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

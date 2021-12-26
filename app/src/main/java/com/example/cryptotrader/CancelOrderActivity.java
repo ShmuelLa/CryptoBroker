@@ -9,6 +9,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import android.app.Dialog;
 import android.app.Notification;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -48,7 +49,12 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CancelOrderActivity extends AppCompatActivity {
+/**
+ * Cancel order Activity is used to close part or all of the orders that are open on the binance
+ * exchange in realtime. with a toggleable button the user can chose which Account to search in and
+ * then look through the active orders, then cancel them one by one, or all at the same time.
+ */
+public class CancelOrderActivity extends AppCompatActivity implements View.OnClickListener {
     private NotificationManagerCompat notificationManager;
     private DatabaseReference accountsDB;
     private FirebaseUser user;
@@ -59,10 +65,13 @@ public class CancelOrderActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private Dialog myDialog;
     private TextView inputMessage, popupTopic;
-    private ImageView popupImage;
+    private ImageView popupImage,profile;
 
-
-
+    /**
+     * on create to initialize all of the components this screen require, listeners etc'. setting the default option in
+     * the spinner to None for future uses.
+     * @param savedInstanceState all of the open orders that are represented as a bundle object
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +90,20 @@ public class CancelOrderActivity extends AppCompatActivity {
         emergencyButton = findViewById(R.id.emergencyButton);
         progressBar = findViewById(R.id.progressBar);
         myDialog = new Dialog(this);
+        profile = findViewById(R.id.profile);
+        profile.setOnClickListener(this);
         setStatusBarColor();
+    }
+
+    /**
+     * on click used for passing to the Profile screen, mainly for Menu purposes.
+     * @param view
+     */
+    @Override
+    public void onClick(View view) {
+        if(view.getId() == R.id.profile){
+            startActivity(new Intent(CancelOrderActivity.this, ProfileActivity.class));
+        }
     }
 
     public ArrayList<String> normalizeOrderListForSpinner(List<Order> beforeList) {
@@ -96,12 +118,19 @@ public class CancelOrderActivity extends AppCompatActivity {
         return result;
     }
 
+    /**
+     * Utilize the main purpose of the screen. first we set a listener for the spinner that is represents the Account
+     * in which the user chooses to cancel an order. each method is backed by firebase, meaning we check to get the users
+     * accounts from firebase. then we loop on all of the data and find the credentials that are need for the account.
+     * with those we make an API request to Binance to get all open orders, when the users chooses the order he desires
+     * we send another API request to Binance to cancel the order the user has chose, notify the user via notification and
+     * a popup screen for success or failure(via showOrderPopup).
+     */
     void createClientsSpinner() {
         clientSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String chosenUser = clientSpinner.getSelectedItem().toString();
-
                 accountsDB.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -194,6 +223,11 @@ public class CancelOrderActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * A simple parsing method for Strings, to not clutter other methods.
+     * @param beforeList given Arraylist of strings.
+     * @return result, a parsed Arraylist of strings.
+     */
     public ArrayList<String> normalizeOrderListForSpinner(ArrayList<Order> beforeList) {
         ArrayList<String> result = new ArrayList<>();
         for (Order order : beforeList) {
@@ -206,12 +240,19 @@ public class CancelOrderActivity extends AppCompatActivity {
         return result;
     }
 
+    /**
+     * A simple method for controlling the content of the spinner, so to not clutter other methods.
+     */
     void showOpenOrders() {
         ArrayAdapter<String> ordersAdapter = new ArrayAdapter<>(this, android.R.layout
                 .simple_spinner_dropdown_item, normalizedOrderList);
         openOrdersSpinner.setAdapter(ordersAdapter);
     }
 
+    /**
+     * same method mentioned above for alerting the user of success and failure,
+     * controlling the visual content of the page.
+     */
     void showOrderPopup(String topic, String msg) {
         myDialog.setContentView(R.layout.popup_invalid_order_warning);
         Window window = myDialog.getWindow();

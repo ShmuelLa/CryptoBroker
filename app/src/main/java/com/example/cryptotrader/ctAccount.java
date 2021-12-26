@@ -22,14 +22,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ctAccount {
     private final Executor executor;
     ctCredentials credentials;
-    String id;
     String clientName;
     private ArrayList<String> resultSync = new ArrayList<>();
     private List<Order> resultOrdersSync = new ArrayList<>();
-    int totalUSDT;
-    int lockedUSDT;
-    int freeUSDT;
     private ArrayList<Order> result = new ArrayList<>();
+
     public ctAccount(Executor executor, ctCredentials otherCredentials, String name) {
         this.executor = executor;
         credentials = otherCredentials;

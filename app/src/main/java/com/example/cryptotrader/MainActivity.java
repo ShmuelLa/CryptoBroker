@@ -9,6 +9,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+/**
+ * a simple class that is the main view of the user, apart from log in and register no further use.
+ */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     Button register, login;
