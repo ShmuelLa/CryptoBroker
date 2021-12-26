@@ -2,6 +2,8 @@ package com.example.cryptotrader;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,7 +31,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     /**
      * this method initialize all of the components this screen require, listeners etc'.
-     * @param savedInstanceState
+     * @param savedInstanceState Components bundle
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +51,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     /**
      * this method is for navigation purposes.
-     * @param view
+     * @param view current screen view
      */
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -70,7 +73,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     /**
      * this method sets our rules for registering to our app, checking the length of the password,
      * of both entries match and if the email address is valid.
-     * @return
+     * @return String[] email pass validation
      */
     private String[] validateEmailAndPass(){
         String email = editTextEmail.getText().toString().trim();
