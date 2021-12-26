@@ -12,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -29,7 +28,6 @@ import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.AssetBalance;
-import com.binance.api.client.domain.market.TickerPrice;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -49,27 +47,20 @@ import com.litesoftwares.coingecko.impl.CoinGeckoApiClientImpl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
-
-
     private ArrayList<BarEntry> chartEntries;
     private MarketChart resultMarketChart;
     BarChart barChart;
     BarDataSet barDataSet;
     private int chartCounter = 0;
-
-
-
     private ImageButton wallet, chart, add, profile;
     private Button addButton, limitOrderButton, cancelTradeButton, simpleOrderButton,
-            btcVal, ethVal, adaVal, manaVal, bnbVal, testButton;
+            btcVal, ethVal, adaVal, manaVal, bnbVal;
     private Dialog myDialog;
     private EditText accountName, keyInput, secretInput;
     private DatabaseReference accounts_db;
@@ -84,8 +75,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         profile = findViewById(R.id.profile);
         wallet = findViewById(R.id.wallet);
         chart = findViewById(R.id.chart);
-//        testButton = findViewById(R.id.testButtonChart);
-//        testButton.setOnClickListener(this);
         wallet.setOnClickListener(this);
         chart.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -94,11 +83,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         accounts_db = FirebaseDatabase.getInstance().getReference("Accounts");
         progressBar = findViewById(R.id.progressBar);
         setStatusBarColor();
-
-
-
-
-
         chartEntries = new ArrayList<>();
         barChart = findViewById(R.id.barChart);
         try {
@@ -114,9 +98,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch(view.getId()){
-//            case R.id.testButtonChart:
-//                startActivity(new Intent(HomeActivity.this, CandleStickActivity.class));
-//                break;
             case R.id.wallet:
                 showWallet(view);
                 break;
@@ -317,12 +298,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         myDialog.show();
     }
 
-
-
-
-
-
-
     @SuppressWarnings("rawtypes")
     @SuppressLint("StaticFieldLeak")
     private class barChartTask extends AsyncTask {
@@ -367,13 +342,3 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 }
-
-
-//          case "USDT":
-//                  if(Double.parseDouble(allAssets.get(coin).getFree()) > 0) {
-//                  biggy = new BigDecimal(Double.parseDouble(allAssets.get(coin).getFree()))
-//                  .setScale(3,BigDecimal.ROUND_HALF_EVEN);
-//                  }else{
-//                  balance.put("USDT",new BigDecimal(0));
-//                  }
-//                  break;

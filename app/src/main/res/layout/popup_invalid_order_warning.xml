@@ -9,18 +9,33 @@
     android:padding="5dp"
     android:layout_gravity="center">
 
+    <ImageButton
+        android:id="@+id/shareButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="12dp"
+        android:background="#ffffff00"
+        android:gravity="center"
+        android:src="@drawable/share_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/orderInputErrorText"
+        app:layout_constraintVertical_bias="0.666" />
+
     <ImageView
         android:id="@+id/orderPopupImage"
         android:layout_width="70dp"
         android:layout_height="70dp"
+        android:gravity="center"
         android:src="@drawable/error_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.46"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.048"
-        android:gravity="center"/>
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/orderInputTopic"
@@ -35,24 +50,24 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintHorizontal_bias="0.446"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.302" />
+        app:layout_constraintVertical_bias="0.224" />
 
     <TextView
         android:id="@+id/orderInputErrorText"
         android:layout_width="263dp"
         android:layout_height="189dp"
+        android:gravity="center"
         android:text="this is a temporary text that will be changed according to the error received from the order input"
         android:textColor="@color/white"
         android:textSize="25sp"
-        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/orderInputTopic"
-        app:layout_constraintVertical_bias="0.256" />
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
