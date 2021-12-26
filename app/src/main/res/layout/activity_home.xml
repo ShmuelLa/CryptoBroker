@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/background"
+    android:background="@drawable/background2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ProfileActivity"
@@ -11,9 +11,9 @@
 
     <TextView
         android:id="@+id/banner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_width="324dp"
+        android:layout_height="74dp"
+        android:layout_marginTop="4dp"
         android:fontFamily="sans-serif-black"
         android:text="CryptoTrader"
         android:textAlignment="center"
@@ -25,33 +25,41 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/bannerDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Smart Crypto Trader"
-        android:textColor="@color/white"
-        android:textStyle="italic"
-        android:textSize="18sp"
-        android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@id/banner"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        />
+<!--    <TextView-->
+<!--        android:id="@+id/bannerDescription"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Smart Crypto Trader"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:textStyle="italic"-->
+<!--        android:textSize="18sp"-->
+<!--        android:textAlignment="center"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/banner"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        />-->
 
 
-    <Button
-        android:id="@+id/testButtonChart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/preveiw"
+<!--    <Button-->
+<!--        android:id="@+id/testButtonChart"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="4dp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/bannerDescription" />-->
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/barChart"
+        android:layout_width="401dp"
+        android:layout_height="564dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="9dp"
+        app:layout_constraintBottom_toTopOf="@+id/toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/bannerDescription"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/banner" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -62,8 +70,7 @@
         android:theme="?attr/actionBarTheme"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintRight_toRightOf="parent" />
 
     <ImageButton
         android:id="@+id/wallet"

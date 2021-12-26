@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -29,6 +30,11 @@ import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.domain.account.Account;
 import com.binance.api.client.domain.account.AssetBalance;
 import com.binance.api.client.domain.market.TickerPrice;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,6 +44,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.litesoftwares.coingecko.CoinGeckoApiClient;
+import com.litesoftwares.coingecko.domain.Coins.MarketChart;
 import com.litesoftwares.coingecko.impl.CoinGeckoApiClientImpl;
 
 import java.math.BigDecimal;
@@ -46,9 +53,19 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
 
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
+
+
+    private ArrayList<BarEntry> chartEntries;
+    private MarketChart resultMarketChart;
+    BarChart barChart;
+    BarDataSet barDataSet;
+    private int chartCounter = 0;
+
+
 
     private ImageButton wallet, chart, add, profile;
     private Button addButton, limitOrderButton, cancelTradeButton, simpleOrderButton,
@@ -67,8 +84,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         profile = findViewById(R.id.profile);
         wallet = findViewById(R.id.wallet);
         chart = findViewById(R.id.chart);
-        testButton = findViewById(R.id.testButtonChart);
-        testButton.setOnClickListener(this);
+//        testButton = findViewById(R.id.testButtonChart);
+//        testButton.setOnClickListener(this);
         wallet.setOnClickListener(this);
         chart.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -76,16 +93,30 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         user = FirebaseAuth.getInstance().getCurrentUser();
         accounts_db = FirebaseDatabase.getInstance().getReference("Accounts");
         progressBar = findViewById(R.id.progressBar);
+        setStatusBarColor();
 
 
+
+
+
+        chartEntries = new ArrayList<>();
+        barChart = findViewById(R.id.barChart);
+        try {
+            new barChartTask().execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        barChart.animateY(2000);
     }
 
     @Override
     public void onClick(View view) {
         switch(view.getId()){
-            case R.id.testButtonChart:
-                startActivity(new Intent(HomeActivity.this, CandleStickActivity.class));
-                break;
+//            case R.id.testButtonChart:
+//                startActivity(new Intent(HomeActivity.this, CandleStickActivity.class));
+//                break;
             case R.id.wallet:
                 showWallet(view);
                 break;
@@ -284,6 +315,56 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         });
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
+    }
+
+
+
+
+
+
+
+    @SuppressWarnings("rawtypes")
+    @SuppressLint("StaticFieldLeak")
+    private class barChartTask extends AsyncTask {
+
+        @SuppressWarnings("deprecation")
+        private barChartTask() {
+        }
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            CoinGeckoApiClient client = new CoinGeckoApiClientImpl();
+            resultMarketChart = client.getCoinMarketChartById("bitcoin","usd",1);
+            for (List<String> list : resultMarketChart.getPrices()) {
+                BarEntry tempEntry = new BarEntry(chartCounter, Float.parseFloat(list.get(1)));
+                chartCounter++;
+                chartEntries.add(tempEntry);
+            }
+            barDataSet = new BarDataSet(chartEntries, "Price");
+            barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+            barDataSet.setValueTextColor(Color.WHITE);
+            barDataSet.setValueTextSize(16f);
+            client.shutdown();
+            BarData barData = new BarData(barDataSet);
+            barChart.setNoDataTextColor(Color.WHITE);
+            barChart.setFitBars(true);
+            barChart.setData(barData);
+            barChart.getDescription().setText("bitcoin daily");
+            return null;
+        }
+    }
+
+    /**
+     * Sets the status bar color to #121212, The apps main background color
+     * This is used mainly for cosmetics in order to create an immersive feel while browsing the app
+     */
+    void setStatusBarColor() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.status_bar, this.getTheme()));
+        }
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.status_bar));
+        }
     }
 }
 

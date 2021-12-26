@@ -3,14 +3,11 @@ package com.example.cryptotrader;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import com.binance.api.client.BinanceApiClientFactory;
-import com.binance.api.client.BinanceApiRestClient;
-import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -26,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         login = findViewById(R.id.login);
         login.setOnClickListener(this);
         progressBar = findViewById(R.id.progressBar);
+        setStatusBarColor();
     }
 
     @Override
@@ -36,6 +34,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.register:
                 startActivity(new Intent(this, RegisterActivity.class));
+        }
+    }
+
+    void setStatusBarColor() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.status_bar, this.getTheme()));
+        }
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.status_bar));
         }
     }
 }
