@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
 import android.view.Window;
@@ -62,6 +63,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         text_preveiw.add("Accounts balances:\n");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         List currencies= Arrays.asList("BTC","ETH","ADA","BNB","MANA","USDT");
+        setStatusBarColor();
         accounts_db.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -139,6 +141,19 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         if (view.getId() == R.id.logOut) {
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
+        }
+    }
+
+    /**
+     * Sets the status bar color to #121212, The apps main background color
+     * This is used mainly for cosmetics in order to create an immersive feel while browsing the app
+     */
+    void setStatusBarColor() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.status_bar, this.getTheme()));
+        }
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.status_bar));
         }
     }
 }

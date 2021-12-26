@@ -14,6 +14,7 @@ import android.app.Dialog;
 import android.app.Notification;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -91,6 +92,7 @@ public class TraderMarketOrderActivity extends AppCompatActivity implements View
         fundText = findViewById(R.id.fundsAmountText);
         myDialog = new Dialog(this);
         sendOrderButton.setOnClickListener(this);
+        setStatusBarColor();
     }
 
     @Override
@@ -232,5 +234,18 @@ public class TraderMarketOrderActivity extends AppCompatActivity implements View
         inputMessage.setText(msg);
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
+    }
+
+    /**
+     * Sets the status bar color to #121212, The apps main background color
+     * This is used mainly for cosmetics in order to create an immersive feel while browsing the app
+     */
+    void setStatusBarColor() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.status_bar, this.getTheme()));
+        }
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.status_bar));
+        }
     }
 }

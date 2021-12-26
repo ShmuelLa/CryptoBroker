@@ -3,6 +3,7 @@ package com.example.cryptotrader;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -31,6 +32,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
         progressBar = findViewById(R.id.progressBar);
         mAuth = FirebaseAuth.getInstance();
         resetButton.setOnClickListener(this);
+        setStatusBarColor();
     }
 
     @Override
@@ -65,5 +67,18 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
                 }
             }
         });
+    }
+
+    /**
+     * Sets the status bar color to #121212, The apps main background color
+     * This is used mainly for cosmetics in order to create an immersive feel while browsing the app
+     */
+    void setStatusBarColor() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.status_bar, this.getTheme()));
+        }
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.status_bar));
+        }
     }
 }

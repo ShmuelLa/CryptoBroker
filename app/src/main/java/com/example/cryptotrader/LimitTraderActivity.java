@@ -14,6 +14,7 @@ import android.app.Dialog;
 import android.app.Notification;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -50,7 +51,7 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
     private Button sendOrderButton;
     private ImageView popupImage;
     private TextView fundText, priceText, inputMessage, popupTopic;
-    private final String[] tradeOptions = {"Limit Buy", "Limit Sell", "Futures Buy", "Futures Sell"};
+    private final String[] tradeOptions = {"Limit Buy", "Limit Sell"};
     private final String[] symbolFundOptions = {"USDT", "BUSD", "BNB"};
     private final String[] symbolTargetOptions = {"BTC", "ETH", "ADA", "MANA", "BNB"};
     private Spinner clientSpinner;
@@ -98,6 +99,10 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
         priceText = findViewById(R.id.marketPriceText);
         myDialog = new Dialog(this);
         sendOrderButton.setOnClickListener(this);
+        setStatusBarColor();
+        if (clientsList.isEmpty() || clientsList.size() == 1) {
+            showOrderPopup("Error", "Your account has no active api clients thus cannot trade");
+        }
     }
 
     @Override
@@ -252,5 +257,18 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
         inputMessage.setText(msg);
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
+    }
+
+    /**
+     * Sets the status bar color to #121212, The apps main background color
+     * This is used mainly for cosmetics in order to create an immersive feel while browsing the app
+     */
+    void setStatusBarColor() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.status_bar, this.getTheme()));
+        }
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.status_bar));
+        }
     }
 }

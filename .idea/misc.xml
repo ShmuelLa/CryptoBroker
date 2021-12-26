@@ -41,11 +41,13 @@
         <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/drawable/ic_menu_camera.xml" value="0.139453125" />
         <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/drawable/ic_menu_gallery.xml" value="0.139453125" />
         <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/drawable/ic_outline_vpn_key_24.xml" value="0.24791666666666667" />
+        <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/drawable/layout_bg.xml" value="0.199609375" />
         <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/drawable/main_app_icon.xml" value="0.139453125" />
         <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/layout/activity_cancel_order.xml" value="0.2" />
-        <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/layout/activity_candel_stick.xml" value="0.103125" />
+        <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/layout/activity_candel_stick.xml" value="0.176" />
+        <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/layout/activity_candle_stick.xml" value="0.1" />
         <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/layout/activity_forgot_password.xml" value="0.264" />
-        <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/layout/activity_home.xml" value="0.152" />
+        <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/layout/activity_home.xml" value="0.2" />
         <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/layout/activity_login.xml" value="0.264" />
         <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Users/shmue/AndroidStudioProjects/CryptoBroker/app/src/main/res/layout/activity_navigation_drawer.xml" value="0.25815217391304346" />
