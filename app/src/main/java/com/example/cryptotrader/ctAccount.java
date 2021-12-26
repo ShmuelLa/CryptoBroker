@@ -1,5 +1,11 @@
 package com.example.cryptotrader;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.view.Gravity;
+import android.view.Window;
+
 import androidx.annotation.NonNull;
 
 import com.binance.api.client.BinanceApiClientFactory;
@@ -29,7 +35,7 @@ public class ctAccount {
     int totalUSDT;
     int lockedUSDT;
     int freeUSDT;
-    public static ArrayList<Order> result = new ArrayList<>();
+    private ArrayList<Order> result = new ArrayList<>();
     public ctAccount(Executor executor, ctCredentials otherCredentials, String name) {
         this.executor = executor;
         credentials = otherCredentials;
@@ -75,7 +81,12 @@ public class ctAccount {
                     GenericTypeIndicator<HashMap<String, ctCredentials>> gType =
                             new GenericTypeIndicator<HashMap<String,  ctCredentials>>() {};
                     HashMap<String, ctCredentials> map = task.getResult().getValue(gType);
-                    map.forEach((clientName, clientTokens) -> result.add(clientName));
+                    try {
+                        map.forEach((clientName, clientTokens) -> result.add(clientName));
+                    } catch (Exception e) {
+                        System.out.println(e.toString());
+                        result.clear();
+                    }
                 }
             }
         });

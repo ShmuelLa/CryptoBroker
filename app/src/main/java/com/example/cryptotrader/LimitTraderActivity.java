@@ -51,7 +51,7 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
     private Button sendOrderButton;
     private ImageView popupImage;
     private TextView fundText, priceText, inputMessage, popupTopic;
-    private final String[] tradeOptions = {"Limit Buy", "Limit Sell", "Futures Buy", "Futures Sell"};
+    private final String[] tradeOptions = {"Limit Buy", "Limit Sell"};
     private final String[] symbolFundOptions = {"USDT", "BUSD", "BNB"};
     private final String[] symbolTargetOptions = {"BTC", "ETH", "ADA", "MANA", "BNB"};
     private Spinner clientSpinner;
@@ -100,6 +100,9 @@ public class LimitTraderActivity extends AppCompatActivity implements View.OnCli
         myDialog = new Dialog(this);
         sendOrderButton.setOnClickListener(this);
         setStatusBarColor();
+        if (clientsList.isEmpty() || clientsList.size() == 1) {
+            showOrderPopup("Error", "Your account has no active api clients thus cannot trade");
+        }
     }
 
     @Override
