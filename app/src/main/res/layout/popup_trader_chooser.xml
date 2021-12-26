@@ -2,12 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="350dp"
     android:layout_height="400dp"
+    android:layout_gravity="center"
     android:background="@drawable/layout_bg"
-    android:padding="5dp"
-    android:layout_gravity="center">
+    android:orientation="vertical"
+    android:padding="5dp">
 
     <TextView
         android:id="@+id/txtclose"
@@ -34,7 +34,6 @@
         android:textColor="@color/white"
         android:textSize="30dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/simpleOrderButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -46,11 +45,21 @@
         android:layout_height="59dp"
         android:gravity="center"
         android:text="new market order"
-        app:layout_constraintBottom_toTopOf="@+id/limitOrderButton"
-        app:layout_constraintTop_toBottomOf="@+id/popupTopic"
+        android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/popupTopic" />
+
+    <Button
+        android:id="@+id/limitOrderButton"
+        android:layout_width="231dp"
+        android:layout_height="59dp"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:text="new limit order"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/simpleOrderButton" />
 
     <Button
         android:id="@+id/cancelTradeButton"
@@ -58,20 +67,11 @@
         android:layout_height="59dp"
         android:gravity="center"
         android:text="@string/cancel_open_order"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/limitOrderButton" />
 
-    <Button
-        android:id="@+id/limitOrderButton"
-        android:layout_width="231dp"
-        android:layout_height="59dp"
-        android:layout_marginTop="44dp"
-        android:gravity="center"
-        android:text="new limit order"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/simpleOrderButton" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
