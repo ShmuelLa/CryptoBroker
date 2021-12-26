@@ -88,16 +88,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         profile = findViewById(R.id.profile);
         wallet = findViewById(R.id.wallet);
         chart = findViewById(R.id.chart);
-<<<<<<< HEAD
-||||||| f409f97
-//        testButton = findViewById(R.id.testButtonChart);
-//        testButton.setOnClickListener(this);
-=======
         barChartSpinner = findViewById(R.id.barChartSpinner);
         ArrayAdapter<String> coinChartAdapter = new ArrayAdapter<>
                 (this, android.R.layout.simple_spinner_dropdown_item, coinNames);
         barChartSpinner.setAdapter(coinChartAdapter);
->>>>>>> main
         wallet.setOnClickListener(this);
         chart.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -278,18 +272,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
-<<<<<<< HEAD
-
     /**
      * this method shows a poppup containing a veiw that helps user to add an binance API key to the app.
      * all values are added to firebase realtime storage so each account needs to be added once. showing
      * a toast message of the progress.
      * @param view
      */
-||||||| f409f97
-=======
-
->>>>>>> main
     private void showPopupAdd(View view){
         myDialog.setContentView(R.layout.popup_add);
         addButton = myDialog.findViewById(R.id.btnadd);
@@ -373,21 +361,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
-
-<<<<<<< HEAD
     /**
      * this method is for using the Coingeko API and MPAndroidChart library, using an Asynctask so
      * this method will run in the background so to not clutter main thread and main methods.
      */
-||||||| f409f97
-
-
-
-
-
-
-=======
->>>>>>> main
     @SuppressWarnings("rawtypes")
     @SuppressLint("StaticFieldLeak")
     private class barChartTask extends AsyncTask {
