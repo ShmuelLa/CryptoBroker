@@ -31,7 +31,6 @@ import com.binance.api.client.BinanceApiAsyncRestClient;
 import com.binance.api.client.BinanceApiCallback;
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.domain.account.NewOrderResponse;
-import com.binance.api.client.domain.account.Trade;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -112,7 +111,7 @@ public class TraderMarketOrderActivity extends AppCompatActivity implements View
             chosenSymbol = chosenTargetCoin + chosenFundCoin;
             if (checkOrderValidity()) return;
             if (chosenOrderType.equals("Buy") || chosenOrderType.equals("Sell")) {
-                initiateLimitOrder();
+                initiateMarketOrder();
             }
         } else if (v.getId() == R.id.profile) {
             startActivity(new Intent(TraderMarketOrderActivity.this, ProfileActivity.class));
@@ -137,10 +136,10 @@ public class TraderMarketOrderActivity extends AppCompatActivity implements View
     }
 
     /**
-     * Generates a limit order according to information filled by the user
+     * Generates a Market order according to information filled by the user
      * Will also mitigate errors and promp the customer accordingly
      */
-    void initiateLimitOrder() {
+    void initiateMarketOrder() {
         accountsDB.child(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
