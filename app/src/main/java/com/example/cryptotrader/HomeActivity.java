@@ -34,7 +34,6 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -60,34 +59,35 @@ import java.util.concurrent.ExecutionException;
  */
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
     private ArrayList<BarEntry> chartEntries;
-    private MarketChart resultMarketChart;
     private BarChart barChart;
     private BarDataSet barDataSet;
     private int chartCounter = 0;
-    private ImageButton wallet, chart, add, profile;
-    private Button addButton, limitOrderButton, cancelTradeButton, simpleOrderButton,
-            btcVal, ethVal, adaVal, manaVal, bnbVal;
+    private Button btcVal;
+    private Button ethVal;
+    private Button adaVal;
+    private Button manaVal;
+    private Button bnbVal;
     private Dialog myDialog;
     private EditText accountName, keyInput, secretInput;
     private DatabaseReference accounts_db;
     private FirebaseUser user;
     private ProgressBar progressBar;
     private Spinner barChartSpinner;
-    private String[] coinNames= {"bitcoin", "ethereum", "cardano", "decentraland", "binancecoin"};
+    private final String[] coinNames= {"bitcoin", "ethereum", "cardano", "decentraland", "binancecoin"};
 
-    @Override
     /**
      *  on create to initialize all of the components this screen require, listeners etc'. setting the visualization
      *  of a wanted given coin chosen by the user, defaulting in BTC when no coin in given.
      */
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         myDialog = new Dialog(this);
         setContentView(R.layout.activity_home);
-        add = findViewById(R.id.add);
-        profile = findViewById(R.id.profile);
-        wallet = findViewById(R.id.wallet);
-        chart = findViewById(R.id.chart);
+        ImageButton add = findViewById(R.id.add);
+        ImageButton profile = findViewById(R.id.profile);
+        ImageButton wallet = findViewById(R.id.wallet);
+        ImageButton chart = findViewById(R.id.chart);
         barChartSpinner = findViewById(R.id.barChartSpinner);
         ArrayAdapter<String> coinChartAdapter = new ArrayAdapter<>
                 (this, android.R.layout.simple_spinner_dropdown_item, coinNames);
@@ -136,8 +136,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * for navigation purposes, this on click method what represents the Menu of the application.
      * can be accessed for every page.
-     * @param view
+     * @param view This view
      */
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View view) {
         switch(view.getId()){
@@ -165,7 +166,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      * request to Binance- one to get all of the assets in the account and the other the the price
      * of all coins in the market, then parsing them to get how much is free in USDT(stable-coin)
      * and how much is in assets in USD at the account.
-     * @param view
+     * @param view This view
      */
     private void showWallet(View view) {
         ArrayList<String> nList = new ArrayList<>();
@@ -282,7 +283,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
   private void showPopupAdd(View view){
         myDialog.setContentView(R.layout.popup_add);
-        addButton = myDialog.findViewById(R.id.btnadd);
+      Button addButton = myDialog.findViewById(R.id.btnadd);
         accountName = myDialog.findViewById(R.id.account_name_input);
         keyInput = myDialog.findViewById(R.id.key_input);
         secretInput = myDialog.findViewById(R.id.secret_input);
@@ -325,7 +326,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      * this method shows the main popup for the trading platform at the app. from here the user
      * can navigate to cancel orders, order limit, and plain buy and sell screens, using buttons
      * and button onClicklisteners.
-     * @param view
+     * @param view This view
      */
     void showPopupTradeChooser(View view) {
         myDialog.setContentView(R.layout.popup_trader_chooser);
@@ -333,8 +334,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         window.setGravity(Gravity.CENTER);
         window.getAttributes().windowAnimations = R.style.DialogAnimator;
         TextView closePopupText = myDialog.findViewById(R.id.txtclose);
-        simpleOrderButton = myDialog.findViewById(R.id.simpleOrderButton);
-        limitOrderButton = myDialog.findViewById(R.id.limitOrderButton);
+        Button simpleOrderButton = myDialog.findViewById(R.id.simpleOrderButton);
+        Button limitOrderButton = myDialog.findViewById(R.id.limitOrderButton);
         limitOrderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -347,7 +348,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(HomeActivity.this, TraderMarketOrderActivity.class));
             }
         });
-        cancelTradeButton = myDialog.findViewById(R.id.cancelTradeButton);
+        Button cancelTradeButton = myDialog.findViewById(R.id.cancelTradeButton);
         cancelTradeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -382,7 +383,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         protected Object doInBackground(Object[] objects) {
             CoinGeckoApiClient client = new CoinGeckoApiClientImpl();
             int barColor = 0xFF6200ee;
-            resultMarketChart = client.getCoinMarketChartById(symbol,"usd",1);
+            MarketChart resultMarketChart = client.getCoinMarketChartById(symbol, "usd", 1);
             for (List<String> list : resultMarketChart.getPrices()) {
                 BarEntry tempEntry = new BarEntry(chartCounter, Float.parseFloat(list.get(1)));
                 chartCounter++;
