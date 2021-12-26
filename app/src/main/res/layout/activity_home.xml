@@ -8,58 +8,44 @@
     tools:context=".ProfileActivity"
     android:fitsSystemWindows="true">
 
-
     <TextView
         android:id="@+id/banner"
         android:layout_width="324dp"
-        android:layout_height="74dp"
-        android:layout_marginTop="4dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="sans-serif-black"
-        android:text="CryptoTrader"
-        android:textAlignment="center"
+        android:text="CryptoBroker"
+        android:layout_marginLeft="10dp"
         android:textColor="@color/white"
-        android:textSize="60sp"
+        android:textSize="40sp"
         android:textStyle="bold"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/bannerDescription"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Smart Crypto Trader"-->
-<!--        android:textColor="@color/white"-->
-<!--        android:textStyle="italic"-->
-<!--        android:textSize="18sp"-->
-<!--        android:textAlignment="center"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/banner"-->
-<!--        app:layout_constraintLeft_toLeftOf="parent"-->
-<!--        app:layout_constraintRight_toRightOf="parent"-->
-<!--        />-->
-
-
-<!--    <Button-->
-<!--        android:id="@+id/testButtonChart"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="4dp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.0"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="@+id/bannerDescription" />-->
+    <Spinner
+        android:id="@+id/barChartSpinner"
+        android:spinnerMode="dialog"
+        android:layout_width="338dp"
+        android:layout_height="49dp"
+        android:backgroundTint="#90ffffff"
+        android:background="@android:drawable/btn_dropdown"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        app:layout_constraintBottom_toTopOf="@id/barChart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/banner" />
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/barChart"
-        android:layout_width="401dp"
-        android:layout_height="564dp"
-        android:layout_marginTop="10dp"
+        android:layout_width="404dp"
+        android:layout_height="513dp"
         android:layout_marginBottom="9dp"
         app:layout_constraintBottom_toTopOf="@+id/toolbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/banner" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
